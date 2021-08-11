@@ -1,0 +1,36 @@
+@page "/Config/Resources"
+@using LSSD.Bookings
+@code {
+
+    [Inject]
+    ResourceService _repository { get; set; }
+
+
+
+}
+
+<h1>Configure Resources</h1>
+<a href="/Config/Resources/New">New Resource</a>
+
+<table class="table">
+<thead>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Description</th>
+</thead>
+<tbody>
+    @foreach(Resource resource in _repository.GetAll()) 
+    {
+        <tr>
+            <td><a href="/Config/Resources/@(resource.Id.ToString())">@(resource.Id.ToString())</a></td>
+            <td>@resource.Name
+                @if(!resource.IsEnabled) 
+                {
+                    <i> (DISABLED)</i>
+                }
+            </td>
+            <td>@resource.Description</td>
+        </tr>    
+    }
+</tbody>
+</table>

@@ -101,7 +101,7 @@ namespace LSSD.Bookings.Data
 
         public void Update(T entity)
         {
-            if (entity.Id == null)
+            if (entity.Id == new Guid())
             {
                 Insert(entity);
             }

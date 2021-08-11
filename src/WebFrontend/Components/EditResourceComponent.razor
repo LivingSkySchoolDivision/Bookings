@@ -1,0 +1,103 @@
+@using LSSD.Bookings;
+
+@code {
+
+    [Inject]
+    ResourceService _repository { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    [Parameter]
+    public Resource Resource { get; set; } = null;
+
+    [Parameter]
+    public bool CreateNew { get; set; } = false;
+
+    [Parameter]
+    public string BackRoute { get; set; } = "";
+    
+
+    protected void HandleValidSubmit()
+    {
+        saveData();
+    }
+
+    protected void HandleInValidSubmit()
+    {
+        saveData();
+    }
+
+    private void saveData()
+    {
+        // Save the resource via the service
+        _repository.Update(Resource);
+        NavigationManager.NavigateTo(BackRoute); 
+    }
+
+    protected override void OnInitialized()
+    {
+        if (CreateNew) {
+            Resource = new Resource() 
+            {
+                Id = new Guid(),
+                Name = "New Resource",
+                Description = "",
+                IsEnabled = true
+            };
+        }
+    }
+
+    protected void OnClick_Cancel()
+    {
+        // Go back
+        NavigationManager.NavigateTo(BackRoute);        
+    }
+}
+
+<div class="container">
+
+@if(Resource != null) {
+    <EditForm Model="@Resource" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInValidSubmit">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-3">ID</div>
+            <div class="col-sm-6">@Resource.Id.ToString()</div>
+        </div>
+        <div class="form-group row">
+            <label for="resourceName" class="col-sm-3">Name: </label>
+            <InputText id="resourceName" class="form-control col-sm-8" @bind-Value="@Resource.Name"></InputText>
+            <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.Name)" />
+        </div>
+        <div class="form-group row">
+            <label for="resourceDescription" class="col-sm-3">Description: </label>
+            <InputTextArea  id="resourceDescription" class="form-control col-sm-8" @bind-Value="@Resource.Description"></InputTextArea>
+            <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.Description)" />
+        </div>
+        <div class="form-row">
+            <div class="offset-sm-3 col-sm-8">
+                <InputCheckbox id="resourceEnabled" @bind-Value="@Resource.IsEnabled"></InputCheckbox>
+                <label for="resourceEnabled" class="">Enabled</label>
+                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Resource.IsEnabled)" />
+            </div>
+        </div>
+    </div>    
+    <div class="form-group">
+        <div class="form-row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary btn-block">Save</button>
+            </div>
+            @if (!string.IsNullOrEmpty(BackRoute)) 
+            {
+            <div class="col">
+                <button type="button" @onclick="OnClick_Cancel" class="btn btn-secondary btn-block">Cancel</button>
+            </div>
+            }
+        </div>
+    </div>
+</EditForm> 
+    
+} else {
+    <i>Null resource</i>
+}
+</div>
