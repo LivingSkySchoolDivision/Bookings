@@ -36,8 +36,10 @@ namespace WebFrontend
             services.AddServerSideBlazor();
             
             services.AddSingleton<MongoDbConnection>();
-            services.AddSingleton<IRepository<Resource>, MongoRepository<Resource>>();            
-            services.AddSingleton<ResourceService>();
+            services.AddSingleton<IRepository<Resource>, MongoRepository<Resource>>();  
+            services.AddSingleton<IRepository<ResourceGroup>, MongoRepository<ResourceGroup>>();            
+            services.AddSingleton<ResourceService>();         
+            services.AddSingleton<ResourceGroupService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

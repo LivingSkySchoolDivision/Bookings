@@ -9,32 +9,27 @@ using LSSD.Bookings;
 
 namespace WebFrontend
 {
-    public class ResourceService
+    public class ResourceGroupService
     {
-        private readonly IRepository<Resource> _repository;
+        private readonly IRepository<ResourceGroup> _repository;
 
 
-        public ResourceService(IRepository<Resource> Repository)
+        public ResourceGroupService(IRepository<ResourceGroup> Repository)
         {
             this._repository = Repository;
         }
 
-        public IEnumerable<Resource> GetAll()
+        public IEnumerable<ResourceGroup> GetAll()
         {
             return _repository.GetAll();
         }
-
-        public IEnumerable<Resource> GetEnabled()
-        {
-            return _repository.GetAll().Where(x => x.IsEnabled == true);
-        }
-
-        public void Update(Resource obj) 
+        
+        public void Update(ResourceGroup obj) 
         {
             _repository.Update(obj);
         }
 
-        public Resource Get(string id)
+        public ResourceGroup Get(string id)
         {
             return _repository.GetById(id);
         }

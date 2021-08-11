@@ -1,0 +1,15 @@
+@page "/Config/ResourceGroups/New"
+@using LSSD.Bookings
+
+@code {
+    [Inject]
+    ResourceGroupService _repo {get;set;}
+
+    [Parameter]
+    public string resourceguid {get;set;}
+}
+
+<h1>New Resource Group</h1>
+<div style="width: 80%; margin-left: auto; margin-right: auto;">
+<WebFrontend.Components.EditResourceGroupComponent CreateNew=true  BackRoute="/Config/"/>
+</div>

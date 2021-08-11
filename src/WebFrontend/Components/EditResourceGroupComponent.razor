@@ -1,0 +1,95 @@
+@using LSSD.Bookings;
+
+@code {
+
+    [Inject]
+    ResourceGroupService _repository { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    [Parameter]
+    public ResourceGroup ResourceGroup { get; set; } = null;
+
+    [Parameter]
+    public bool CreateNew { get; set; } = false;
+
+    [Parameter]
+    public string BackRoute { get; set; } = "";
+    
+
+    protected void HandleValidSubmit()
+    {
+        saveData();
+    }
+
+    protected void HandleInValidSubmit()
+    {
+        saveData();
+    }
+
+    private void saveData()
+    {
+        // Save the resource via the service
+        _repository.Update(ResourceGroup);
+        NavigationManager.NavigateTo(BackRoute); 
+    }
+
+    protected override void OnInitialized()
+    {
+        if (CreateNew) {
+            ResourceGroup = new ResourceGroup() 
+            {
+                Id = new Guid(),
+                Name = "New Resource Group",
+                Description = ""
+            };
+        }
+    }
+
+    protected void OnClick_Cancel()
+    {
+        // Go back
+        NavigationManager.NavigateTo(BackRoute);        
+    }
+}
+
+<div class="container">
+
+@if(ResourceGroup != null) {
+    <EditForm Model="@ResourceGroup" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInValidSubmit">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-3">ID</div>
+            <div class="col-sm-6">@ResourceGroup.Id.ToString()</div>
+        </div>
+        <div class="form-group row">
+            <label for="resourceName" class="col-sm-3">Name: </label>
+            <InputText id="resourceName" class="form-control col-sm-8" @bind-Value="@ResourceGroup.Name"></InputText>
+            <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => ResourceGroup.Name)" />
+        </div>
+        <div class="form-group row">
+            <label for="resourceDescription" class="col-sm-3">Description: </label>
+            <InputTextArea  id="resourceDescription" class="form-control col-sm-8" @bind-Value="@ResourceGroup.Description"></InputTextArea>
+            <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => ResourceGroup.Description)" />
+        </div>
+    </div>    
+    <div class="form-group">
+        <div class="form-row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary btn-block">Save</button>
+            </div>
+            @if (!string.IsNullOrEmpty(BackRoute)) 
+            {
+            <div class="col">
+                <button type="button" @onclick="OnClick_Cancel" class="btn btn-secondary btn-block">Cancel</button>
+            </div>
+            }
+        </div>
+    </div>
+</EditForm> 
+    
+} else {
+    <i>Null ResourceGroup</i>
+}
+</div>

@@ -6,6 +6,9 @@
     ResourceService _repository { get; set; }
 
     [Inject]
+    ResourceGroupService _groupRepository { get; set; }
+
+    [Inject]
     NavigationManager NavigationManager { get; set; }
 
     [Parameter]
@@ -16,6 +19,8 @@
 
     [Parameter]
     public string BackRoute { get; set; } = "";
+
+    ResourceGroup thisResourceGroup = new ResourceGroup();
     
 
     protected void HandleValidSubmit()
@@ -73,6 +78,17 @@
             <label for="resourceDescription" class="col-sm-3">Description: </label>
             <InputTextArea  id="resourceDescription" class="form-control col-sm-8" @bind-Value="@Resource.Description"></InputTextArea>
             <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.Description)" />
+        </div>
+        <div class="form-group row">
+            <label for="resourceGroup" class="col-sm-3">Resource Group: </label>
+            <InputSelect  id="resourceGroup" class="form-control col-sm-8" @bind-Value="@Resource.GroupGUID">
+                <option value="@(new Guid())">-</option>
+                @foreach (ResourceGroup grp in _groupRepository.GetAll())
+                {
+                    <option value="@(grp.Id)">@(grp.Name)</option>
+                }
+            </InputSelect>
+            <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.GroupGUID)" />
         </div>
         <div class="form-row">
             <div class="offset-sm-3 col-sm-8">
