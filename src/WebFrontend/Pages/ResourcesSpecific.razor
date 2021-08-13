@@ -63,6 +63,28 @@
                 ResourceGUID = new Guid(),
                 Id = Guid.NewGuid()
             });
+        thisResourceBookings.Add(
+                new SingleBooking() {
+                BookingDate = new DateTime(2021,08, 12),
+                StartTimeUTC = new DateTime(1990, 01, 01,8,00, 0),
+                DurationMinutes = 450,
+                ShortDescription = "Here's a really long short description that will probably wrap",
+                Requestor = "john.smith",
+                Details = "Details would go here",
+                ResourceGUID = new Guid(),
+                Id = Guid.NewGuid()
+            });
+        thisResourceBookings.Add(
+                new SingleBooking() {
+                BookingDate = new DateTime(2021,08, 2),
+                StartTimeUTC = new DateTime(1990, 01, 01,8,00, 0),
+                DurationMinutes = 450,
+                ShortDescription = "IT - John",
+                Requestor = "john.smith",
+                Details = "Details would go here",
+                ResourceGUID = new Guid(),
+                Id = Guid.NewGuid()
+            });
 
 
         if (year == 0) {

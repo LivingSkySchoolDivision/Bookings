@@ -12,5 +12,12 @@ namespace LSSD.Bookings
         public string Details { get; set; }
         public Guid ResourceGUID { get; set; }        
         public Guid Id { get; set; }
+
+        public DateTime EndTimeUTC { 
+            get 
+            {
+                return StartTimeUTC.AddMinutes(this.DurationMinutes);
+            }
+        }
     }
 }
