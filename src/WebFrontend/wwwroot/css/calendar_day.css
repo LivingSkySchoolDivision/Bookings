@@ -1,0 +1,46 @@
+.daycalendar_day_container {
+    width: 700px;
+    border: 1px solid #C0C0C0;
+}
+
+
+.daycalendar_day {
+}
+
+.daycalendar_hour_block {
+    position: relative;
+}
+
+.daycalendar_day_hour {
+    position: relative;
+    height: 26px;
+    border-bottom: 1px solid #C0C0C0;
+}
+
+.daycalendar_first_hour {
+    border-bottom-style: dashed;
+}
+
+.daycalendar_second_hour {
+    background-color: #F5F5F5;
+}
+
+.daycalendar_day_hour_label {
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+.daycalendar_event {
+    font-size: 10pt;
+    position: absolute;
+    left: 30px;
+    top: 0px;
+    background-color: cornflowerblue;
+    border-radius: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    width: 575px;
+    z-index: 999;
+    overflow: auto;
+    scrollbar-width: thin;
+}

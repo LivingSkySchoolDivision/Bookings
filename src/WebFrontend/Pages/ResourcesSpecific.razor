@@ -29,13 +29,13 @@
 
     protected override void OnInitialized()
     {
-        // test booking
+        // test bookings
         thisResourceBookings.Add(
                 new SingleBooking() {
                 BookingDate = new DateTime(2021,08, 09),
                 StartTimeUTC = new DateTime(1990, 01, 01,14,30, 0),
                 DurationMinutes = 450,
-                ShortDescription = "Here's a really long short description that will probably wrap",
+                ShortDescription = "TEST BOOKING",
                 Requestor = "john.smith",
                 Details = "Details would go here",
                 ResourceGUID = new Guid(),
@@ -46,7 +46,7 @@
                 BookingDate = new DateTime(2021,08, 09),
                 StartTimeUTC = new DateTime(1990, 01, 01,15,45, 0),
                 DurationMinutes = 450,
-                ShortDescription = "Here's a really long short description that will probably wrap",
+                ShortDescription = "TEST BOOKING",
                 Requestor = "john.smith",
                 Details = "Details would go here",
                 ResourceGUID = new Guid(),
@@ -57,7 +57,7 @@
                 BookingDate = new DateTime(2021,08, 09),
                 StartTimeUTC = new DateTime(1990, 01, 01,8,00, 0),
                 DurationMinutes = 450,
-                ShortDescription = "Here's a really long short description that will probably wrap",
+                ShortDescription = "TEST BOOKING",
                 Requestor = "john.smith",
                 Details = "Details would go here",
                 ResourceGUID = new Guid(),
@@ -68,7 +68,7 @@
                 BookingDate = new DateTime(2021,08, 12),
                 StartTimeUTC = new DateTime(1990, 01, 01,8,00, 0),
                 DurationMinutes = 450,
-                ShortDescription = "Here's a really long short description that will probably wrap",
+                ShortDescription = "TEST BOOKING",
                 Requestor = "john.smith",
                 Details = "Details would go here",
                 ResourceGUID = new Guid(),
@@ -79,7 +79,7 @@
                 BookingDate = new DateTime(2021,08, 2),
                 StartTimeUTC = new DateTime(1990, 01, 01,8,00, 0),
                 DurationMinutes = 450,
-                ShortDescription = "IT - John",
+                ShortDescription = "TEST BOOKING",
                 Requestor = "john.smith",
                 Details = "Details would go here",
                 ResourceGUID = new Guid(),
@@ -105,9 +105,9 @@
             selectedResource = _resourceService.Get(resourceguid);
         }      
 
-        // Load bookings appropriate for how the data is displayed
-
         selectedDay = new DateTime(year, month, day);
+                
+        // Load bookings appropriate for how the data is displayed
         
     } 
 }
@@ -118,5 +118,5 @@
 <h1>@selectedResource.Name</h1>
 <a href="/Resources/@(selectedResource.Id.ToString())/Book/">Book this resource</a><br/>
 <br/>
-<WebFrontend.Components.CalendarMonthlyViewComponent Bookings="@thisResourceBookings" Year="@year" Month="@month" Today="@selectedDay" />
+<WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Bookings="@thisResourceBookings" Year="@year" Month="@month" Today="@selectedDay" />
 }

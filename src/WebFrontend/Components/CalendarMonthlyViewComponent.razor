@@ -1,6 +1,10 @@
 @using LSSD.Bookings
 
 @code {
+
+    [Parameter]
+    public Guid resourceGuid { get; set; }
+
     [Parameter]
     public List<SingleBooking> Bookings { get; set; }
 
@@ -80,7 +84,9 @@
                 @if(isToday) {
                     <div id="today"></div>
                 }
-                <div class="calendar_day_number">@dayCounter</div>
+                <div class="calendar_day_number">
+                    <a href="/Resources/@(resourceGuid)/Book/@(_startDate.Year)/@(_startDate.Month)/@(dayCounter)">@dayCounter</a>
+                </div>
                 @if(bookingsThisMonth.ContainsKey(dayCounter)) {
                     @foreach(SingleBooking booking in bookingsThisMonth[dayCounter].OrderBy(x => x.StartTimeUTC.Hour).ThenBy(x => x.StartTimeUTC.Minute)) 
                     {
