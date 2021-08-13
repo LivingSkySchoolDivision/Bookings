@@ -1,10 +1,12 @@
 .daycalendar_day_container {
-    width: 700px;
-    border: 1px solid #C0C0C0;
+    display: grid;
+    grid-template-columns: 50% 50%;
 }
 
 
 .daycalendar_day {
+    border: 1px solid #C0C0C0;
+    width: 700px;
 }
 
 .daycalendar_hour_block {

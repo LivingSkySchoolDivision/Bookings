@@ -9,25 +9,25 @@
 
     [Parameter]
     public string resourceguid { get; set; }
-    
+
     [Parameter]
     public int year { get; set; } = DateTime.Today.Year;
-    
+
     [Parameter]
     public int month { get; set; } = DateTime.Today.Month;
-    
+
     [Parameter]
     public int day { get; set; } = DateTime.Today.Day;
-    
+
     DateTime selectedDay;
 
     Resource selectedResource = null;
     List<SingleBooking> thisResourceBookings = new List<SingleBooking>();
-    
+
 
     protected override void OnInitialized()
     {
-        if (resourceguid != null) 
+        if (resourceguid != null)
         {
             selectedResource = _resourceService.Get(resourceguid);
         }
@@ -42,9 +42,9 @@
 
         if (day == 0) {
             day = DateTime.Today.Day;
-        }   
+        }
 
-        selectedDay = new DateTime(year, month, day);  
+        selectedDay = new DateTime(year, month, day);
 
         // Load bookings for this resource on this day
 
@@ -82,9 +82,9 @@
                 ResourceGUID = new Guid(),
                 Id = Guid.NewGuid()
             });
-        
 
-    } 
+
+    }
 
 }
 
@@ -98,20 +98,20 @@
     @for(int hour=6;hour<24;hour++) {
         <div class="daycalendar_hour_block">
             <div class="daycalendar_day_hour daycalendar_first_hour">
-                <div class="daycalendar_day_hour_label">@hour:00</div>            
+                <div class="daycalendar_day_hour_label">@hour:00</div>
             </div>
             <div class="daycalendar_day_hour daycalendar_second_hour">
-                <div class="daycalendar_day_hour_label">@hour:30</div>            
+                <div class="daycalendar_day_hour_label">@hour:30</div>
             </div>
             <div style="position: absolute; top: 0; left: 50px;">
-                @foreach(SingleBooking booking  in thisResourceBookings.Where(x => x.StartTimeUTC.Hour == @hour)) 
+                @foreach(SingleBooking booking  in thisResourceBookings.Where(x => x.StartTimeUTC.Hour == @hour))
                 {
                     <div class="daycalendar_event" style="top: @((booking.StartTimeUTC.Minute/15)*13)px; height:@((booking.DurationMinutes/15)*13)px">
                         <b>@booking.ShortDescription</b><br/>
                         @(booking.StartTimeUTC.ToShortTimeString()) to @(booking.EndTimeUTC.ToShortTimeString())
                     </div>
                 }
-                
+
             </div>
         </div>
     }
