@@ -1,0 +1,100 @@
+@page "/Resources/{resourceguid}"
+@page "/Resources/{resourceguid}/{year:int}"
+@page "/Resources/{resourceguid}/{year:int}/{month:int}"
+@page "/Resources/{resourceguid}/{year:int}/{month:int}/{day:int}"
+@using LSSD.Bookings
+
+@code {
+
+    [Inject]
+    ResourceService _resourceService { get; set; }
+
+    [Parameter]
+    public string resourceguid { get; set; }
+
+    [Parameter]
+    public int year { get; set; } = DateTime.Today.Year;
+    
+    [Parameter]
+    public int month { get; set; } = DateTime.Today.Month;
+    
+    [Parameter]
+    public int day { get; set; } = DateTime.Today.Day;
+    
+
+    Resource selectedResource = null;
+    List<SingleBooking> thisResourceBookings = new List<SingleBooking>();
+    DateTime selectedDay;
+   
+
+    protected override void OnInitialized()
+    {
+        // test booking
+        thisResourceBookings.Add(
+                new SingleBooking() {
+                BookingDate = new DateTime(2021,08, 09),
+                StartTimeUTC = new DateTime(1990, 01, 01,14,30, 0),
+                DurationMinutes = 450,
+                ShortDescription = "Here's a really long short description that will probably wrap",
+                Requestor = "john.smith",
+                Details = "Details would go here",
+                ResourceGUID = new Guid(),
+                Id = Guid.NewGuid()
+            });
+        thisResourceBookings.Add(
+                new SingleBooking() {
+                BookingDate = new DateTime(2021,08, 09),
+                StartTimeUTC = new DateTime(1990, 01, 01,15,45, 0),
+                DurationMinutes = 450,
+                ShortDescription = "Here's a really long short description that will probably wrap",
+                Requestor = "john.smith",
+                Details = "Details would go here",
+                ResourceGUID = new Guid(),
+                Id = Guid.NewGuid()
+            });
+        thisResourceBookings.Add(
+                new SingleBooking() {
+                BookingDate = new DateTime(2021,08, 09),
+                StartTimeUTC = new DateTime(1990, 01, 01,8,00, 0),
+                DurationMinutes = 450,
+                ShortDescription = "Here's a really long short description that will probably wrap",
+                Requestor = "john.smith",
+                Details = "Details would go here",
+                ResourceGUID = new Guid(),
+                Id = Guid.NewGuid()
+            });
+
+
+        if (year == 0) {
+            year = DateTime.Today.Year;
+        }
+
+        if (month == 0) {
+            month = DateTime.Today.Month;
+        }
+
+        if (day == 0) {
+            day = DateTime.Today.Day;
+        }
+
+
+        if (resourceguid != null) 
+        {
+            selectedResource = _resourceService.Get(resourceguid);
+        }      
+
+        // Load bookings appropriate for how the data is displayed
+
+        selectedDay = new DateTime(year, month, day);
+        
+    } 
+}
+
+@if(selectedResource == null) {
+<p>Resource not found</p>
+} else {
+<h1>@selectedResource.Name</h1>
+<a href="/Resources/@(selectedResource.Id.ToString())/Book/">Book this resource</a><br/>
+<br/>
+<WebFrontend.Components.CalendarMonthlyViewComponent Bookings="@thisResourceBookings" Year="@year" Month="@month" Today="@selectedDay" />
+}

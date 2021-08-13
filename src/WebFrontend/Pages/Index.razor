@@ -1,9 +1,53 @@
 @page "/"
+@using LSSD.Bookings
+@code {
+    
+    [Inject]
+    ResourceService _repository { get; set; }
+
+    [Inject]
+    ResourceGroupService _groupRepository { get; set; }
+
+    Dictionary<Guid, List<Resource>> _allResources = new Dictionary<Guid, List<Resource>>();
+
+    protected override void OnInitialized()
+    {
+        _allResources = new Dictionary<Guid, List<Resource>>();
+
+        foreach(Resource resource in _repository.GetEnabled())
+        {
+            if (!_allResources.ContainsKey(resource.GroupGUID))
+            {
+                _allResources.Add(resource.GroupGUID, new List<Resource>());
+            }
+
+            _allResources[resource.GroupGUID].Add(resource);
+        }
+    }
+
+}
 
 <h1>LSSD Bookings</h1>
 
 <h3>Bookable Resources</h3>
-<div id="bookable_resource_container">
+<div id="resource_group_container">
+
+
+@foreach(ResourceGroup group in _groupRepository.GetAll())
+{
+    if (_allResources.ContainsKey(group.Id)) 
+    {
+        <h4>@group.Name</h4>
+        foreach(Resource resource in _allResources[group.Id]) 
+        {
+            <div class="resource">
+                <div class="resource_name"><a href="/Resources/@(resource.Id)">@resource.Name</a></div>
+            </div>            
+        }
+    }
+}
+
+
     
 </div>
 

@@ -1,0 +1,29 @@
+@page "/Resources/{resourceguid}/Book"
+@using LSSD.Bookings
+
+@code {
+
+    [Inject]
+    ResourceService _resourceService { get; set; }
+
+    [Parameter]
+    public string resourceguid { get; set; }
+
+    Resource selectedResource = null;
+
+    protected override void OnInitialized()
+    {
+        if (resourceguid != null) 
+        {
+            selectedResource = _resourceService.Get(resourceguid);
+        }      
+    } 
+
+}
+
+@if(selectedResource == null) {
+<p>Resource not found</p>
+} else {
+<h1>@selectedResource.Name: Create a booking</h1>
+
+}

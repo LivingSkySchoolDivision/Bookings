@@ -1,0 +1,182 @@
+@using LSSD.Bookings
+
+@code {
+    [Parameter]
+    public List<SingleBooking> Bookings { get; set; }
+
+    [Parameter]
+    public int Year { get; set; }
+
+    [Parameter]
+    public int Month { get; set; }
+
+    [Parameter]
+    public DateTime Today { get; set; }
+       
+    DateTime _startDate;
+
+    Dictionary<int, List<SingleBooking>> bookingsThisMonth = new Dictionary<int, List<SingleBooking>>();
+
+    protected override void OnInitialized()
+    {
+        _startDate = new DateTime(Year, Month, 1);  
+
+        // Organize bookings into dates that would be displayed
+        List<SingleBooking> raw_bookingsthismonth = Bookings.Where(x =>
+            (x.BookingDate.Year == _startDate.Year) &&
+            (x.BookingDate.Month == _startDate.Month)
+            ).ToList();
+
+        foreach(SingleBooking booking in raw_bookingsthismonth) {
+           if(!bookingsThisMonth.ContainsKey(booking.BookingDate.Day)) {
+               bookingsThisMonth.Add(booking.BookingDate.Day, new List<SingleBooking>());
+           }
+           bookingsThisMonth[booking.BookingDate.Day].Add(booking);
+        }
+    } 
+
+    protected void OnClick_PrevMonth() {
+        _startDate = _startDate.AddMonths(-1);
+    }
+
+    protected void OnClick_NextMonth() {
+        _startDate = _startDate.AddMonths(1);
+    }
+
+}
+
+@{
+    int dayCounter = ((int)_startDate.DayOfWeek * -1) + 1;
+}
+
+<style type="text/css">
+    .calendar_container {
+        width: 1050px;
+        box-sizing: border-box; 
+    }
+
+    .calenday_month_day_name {
+        font-size: 10pt;
+        width: 150px;
+        text-align: center;
+        border-top: 1px solid #C0C0C0;
+        border-right: 1px solid #C0C0C0;
+        border-bottom: 1px solid #C0C0C0;
+        box-sizing: border-box;
+    }
+
+    .calendar_day {
+        width: 150px;
+        height: 150px;
+        border-bottom: 1px solid #C0C0C0;
+        border-right: 1px solid #C0C0C0;
+        box-sizing: border-box; 
+        position: relative;  
+        padding: 5px;  
+        overflow: auto;
+        scrollbar-width: thin;
+    }
+
+    .calendar_day_nomonth {
+        width: 150px;
+        height: 150px;
+        border-bottom: 1px solid #C0C0C0;
+        border-right: 1px solid #C0C0C0;
+        box-sizing: border-box; 
+        position: relative;  
+        padding: 5px;  
+        background-color: #F0F0F0;
+    }
+
+    .calendar_month {
+        border-left: 1px solid #C0C0C0;
+        width: 1050px;
+        display: grid; 
+        box-sizing: border-box;
+        grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;
+    }
+
+    #today {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        border: 2px solid slateblue;
+    }
+
+    .calendar_heading {
+        position: relative;        
+        border-bottom: 1px solid #C0C0C0;
+    }
+
+    .calendar_nav_buttons {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+
+    .calendar_item_preview {
+        font-size: 8pt;
+        background-color: gainsboro;
+        border-radius: 4px;
+        padding: 2px;
+        color: black;
+        margin-bottom: 2px;
+    }
+</style>
+
+@foreach(SingleBooking booking in Bookings) {
+    <p>@(@booking.StartTimeUTC.ToShortTimeString()):@(booking.ShortDescription)</p>
+}
+
+
+<div class="calendar_container">
+    <div class="calendar_heading">
+        <div class="calendar_nav_buttons">
+            <button class="btn btn-link" @onclick="OnClick_PrevMonth">Previous Month</button>
+            <button class="btn btn-link" @onclick="OnClick_NextMonth">Next Month</button>
+        </div>
+    <b>@(Helpers.MonthName(_startDate.Month))</b>
+    </div>
+    <br/>
+    @(_startDate.ToLongDateString())
+    <br/>
+    <div class="calendar_month">
+    <div class="calenday_month_day_name">Sunday</div>
+    <div class="calenday_month_day_name">Monday</div>
+    <div class="calenday_month_day_name">Tuesday</div>
+    <div class="calenday_month_day_name">Wednesday</div>
+    <div class="calenday_month_day_name">Thursday</div>
+    <div class="calenday_month_day_name">Friday</div>
+    <div class="calenday_month_day_name">Saturday</div>
+
+    @while(dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month))
+    {
+        for(int x = 0; x < 7; x++) {
+            bool isToday = ((DateTime.Now.Year == _startDate.Year) && (DateTime.Now.Month == _startDate.Month) && (DateTime.Now.Day == dayCounter));
+            
+            @if ((dayCounter > 0) && (dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month))) 
+            {            
+                <div class="calendar_day">
+                @if(isToday) {
+                    <div id="today"></div>
+                }
+                <div class="calendar_day_number">@dayCounter</div>
+                @if(bookingsThisMonth.ContainsKey(dayCounter)) {
+                    @foreach(SingleBooking booking in bookingsThisMonth[dayCounter].OrderBy(x => x.StartTimeUTC.Hour).ThenBy(x => x.StartTimeUTC.Minute)) 
+                    {
+                        <div class="calendar_item_preview">@(booking.StartTimeUTC.ToString("HH:mm")) @(booking.ShortDescription)</div>
+                    }
+                }
+                </div>            
+            } else {
+                <div class="calendar_day_nomonth">            
+                </div>
+            }
+            dayCounter++;
+        }
+    }
+    </div>
+</div>
