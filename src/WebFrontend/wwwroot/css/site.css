@@ -42,9 +42,29 @@ a, .btn-link {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.main {
+    padding: 25px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.resource_group_container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-items: center;
+}
+
+.resource_item {
+    text-align: left;
+}
+
+.resource_group {
+    margin: 20px;
+}
