@@ -26,9 +26,7 @@
     }
 
 }
-<h1>LSSD Bookings</h1>
-
-<h3>Bookable Resources</h3>
+<h1>LSSD Resource Booking System</h1>
 
 <div class="resource_group_container">
 @foreach(ResourceGroup group in _groupRepository.GetAll().OrderBy(x => x.Name))
@@ -42,6 +40,7 @@
         {
             <div class="resource_item">
                 <div class="resource_name"><a href="/Resources/@(res.Id)">@res.Name</a></div>
+                <div class="resource_description">@res.Description</div>
             </div>            
         }
 

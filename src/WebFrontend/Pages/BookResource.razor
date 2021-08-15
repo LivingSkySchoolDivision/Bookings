@@ -19,14 +19,14 @@
     [Parameter]
     public int day { get; set; } = DateTime.Today.Day;
 
-    DateTime selectedDay;
-
     Resource selectedResource = null;
     List<SingleBooking> thisResourceBookings = new List<SingleBooking>();
 
+    SingleBooking newBooking = new SingleBooking();
 
     protected override void OnInitialized()
     {
+
         if (resourceguid != null)
         {
             selectedResource = _resourceService.Get(resourceguid);
@@ -43,47 +43,28 @@
         if (day == 0) {
             day = DateTime.Today.Day;
         }
-
-        selectedDay = new DateTime(year, month, day);
+    
+        newBooking = new SingleBooking() {
+            DurationMinutes = 450,
+            StartHourUTC = 8,
+            StartMinuteUTC = 0,
+            BookingDate = new DateTime(year, month, day)
+        };
 
         // Load bookings for this resource on this day
 
-        // test bookings
-        thisResourceBookings.Add(
-                new SingleBooking() {
-                BookingDate = new DateTime(2021,08, 09),
-                StartTimeUTC = new DateTime(1990, 01, 01,11,30, 0),
-                DurationMinutes = 60,
-                ShortDescription = "TEST BOOKING",
-                Requestor = "john.smith",
-                Details = "Details would go here",
-                ResourceGUID = new Guid(),
-                Id = Guid.NewGuid()
-            });
-        thisResourceBookings.Add(
-                new SingleBooking() {
-                BookingDate = new DateTime(2021,08, 09),
-                StartTimeUTC = new DateTime(1990, 01, 01,13,45, 0),
-                DurationMinutes = 90,
-                ShortDescription = "TEST BOOKING",
-                Requestor = "john.smith",
-                Details = "Details would go here",
-                ResourceGUID = new Guid(),
-                Id = Guid.NewGuid()
-            });
-        thisResourceBookings.Add(
-                new SingleBooking() {
-                BookingDate = new DateTime(2021,08, 09),
-                StartTimeUTC = new DateTime(1990, 01, 01,8,00, 0),
-                DurationMinutes = 120,
-                ShortDescription = "TEST BOOKING",
-                Requestor = "john.smith",
-                Details = "Details would go here",
-                ResourceGUID = new Guid(),
-                Id = Guid.NewGuid()
-            });
+
+    }
 
 
+    protected void HandleValidSubmit()
+    {
+        // Save the data
+    }
+
+    protected void HandleInValidSubmit()
+    {
+        // Do nothing
     }
 
 }
@@ -91,30 +72,51 @@
 @if(selectedResource == null) {
 <p>Resource not found</p>
 } else {
-<h1>@selectedResource.Name: Create a booking</h1>
-
+<h1>@selectedResource.Name</h1>
+<p>
+[<a href="/Resources/@(selectedResource.Id.ToString())">Back</a>]<br/>
+</p>
+<hr/>
 <div class="daycalendar_day_container">
-    <div class="daycalendar_day">
-    @for(int hour=6;hour<24;hour++) {
-        <div class="daycalendar_hour_block">
-            <div class="daycalendar_day_hour daycalendar_first_hour">
-                <div class="daycalendar_day_hour_label">@hour:00</div>
-            </div>
-            <div class="daycalendar_day_hour daycalendar_second_hour">
-                <div class="daycalendar_day_hour_label">@hour:30</div>
-            </div>
-            <div style="position: absolute; top: 0; left: 50px;">
-                @foreach(SingleBooking booking  in thisResourceBookings.Where(x => x.StartTimeUTC.Hour == @hour))
-                {
-                    <div class="daycalendar_event" style="top: @((booking.StartTimeUTC.Minute/15)*13)px; height:@((booking.DurationMinutes/15)*13)px">
-                        <b>@booking.ShortDescription</b><br/>
-                        @(booking.StartTimeUTC.ToShortTimeString()) to @(booking.EndTimeUTC.ToShortTimeString())
+    <div class="daycalendar_day_newbooking_form">
+        <h2>Create new booking</h2>
+         <EditForm Model="newBooking" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            
+            <WebFrontend.Components.SingleBookingEditComponent Booking="@newBooking" BookableResource="@selectedResource" />
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary btn-block">Create booking</button>
                     </div>
-                }
-
+                </div>
             </div>
+         </EditForm>
+    </div>
+    <div style="padding: 10px;">
+        <h3>@(newBooking.BookingDate.ToString("dddd, MMMM dd, yyyy"))</h3>
+        <div class="daycalendar_day">
+        @for(int hour=6;hour<24;hour++) {
+            <div class="daycalendar_hour_block">
+                <div class="daycalendar_day_hour daycalendar_first_hour">
+                    <div class="daycalendar_day_hour_label">@hour:00</div>
+                </div>
+                <div class="daycalendar_day_hour daycalendar_second_hour">
+                    <div class="daycalendar_day_hour_label">@hour:30</div>
+                </div>
+                <div style="position: absolute; top: 0; left: 50px;">
+                    @foreach(SingleBooking booking  in thisResourceBookings.Where(x => x.StartTimeUTC.Hour == @hour))
+                    {
+                        <div class="daycalendar_event" style="top: @((booking.StartTimeUTC.Minute/15)*13)px; height:@((booking.DurationMinutes/15)*13)px">
+                            <b>@booking.ShortDescription</b><br/>
+                            @(booking.StartTimeUTC.ToShortTimeString()) to @(booking.EndTimeUTC.ToShortTimeString())
+                        </div>
+                    }
+                </div>
+            </div>
+        }
         </div>
-    }
     </div>
 </div>
 }

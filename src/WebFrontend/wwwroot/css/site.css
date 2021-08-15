@@ -63,8 +63,21 @@ a, .btn-link {
 
 .resource_item {
     text-align: left;
+    margin-bottom: 10px;
 }
 
 .resource_group {
     margin: 20px;
+}
+
+.resource_description {
+    font-size: 75%;
+}
+
+.resource_name {
+
+}
+
+.form-row {
+    margin-bottom: 5px;
 }

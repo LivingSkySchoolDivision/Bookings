@@ -1,0 +1,98 @@
+@using LSSD.Bookings;
+
+@code {
+    [Parameter]
+    public SingleBooking Booking { get; set; }
+
+    [Parameter]
+    public Resource BookableResource { get; set; }
+
+}
+
+<div class="form-group">
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="resourceName" class="font-weight-bold">Resource: </label>
+        </div>
+        <div class="col-sm-4">
+            @(BookableResource.Name)
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingRequestorActual" class="font-weight-bold">Requestor (actual): </label>
+        </div>
+        <div class="col-sm-4">
+            @(Booking.ActualRequestor)    
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingRequestor" class="font-weight-bold">Start Time: </label>
+        </div>
+        <div class="col-sm-2">
+            <InputSelect id="bookingHour" class="form-control" @bind-Value="@Booking.StartHourUTC" placeholder="">
+            @for(int x = 6; x < 24; x++) {
+                <option value="@x">@x</option>
+            }
+            </InputSelect>
+            <ValidationMessage For="@(() => Booking.StartHourUTC)" />
+        </div>
+        <div class="col-sm-2">
+            <InputSelect id="bookingMinute" class="form-control" @bind-Value="@Booking.StartMinuteUTC" placeholder="">
+            @for(int x = 0; x <= 60; x = x + 15) {
+                <option value="@x">@(x.ToString("D2"))</option>
+            }
+            </InputSelect>
+            <ValidationMessage For="@(() => Booking.StartMinuteUTC)" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingDuration" class="font-weight-bold">Duration: </label>
+        </div>
+        <div class="col-sm-4">
+            <InputSelect id="bookingDuration" class="form-control" @bind-Value="@Booking.DurationMinutes" placeholder="">
+            @for(int x = 15; x <=720; x = x + 15) {
+                @if(x < 60) {
+                    <option value="@x">@x minutes</option>
+                } else if (x < 120) {
+                    TimeSpan ts = new TimeSpan(0, x, 0);
+                    <option value="@x">@ts.Hours hour @(ts.Minutes > 0 ? ", " + ts.Minutes + " minutes" : "")</option>                        
+                } else {
+                    TimeSpan ts = new TimeSpan(0, x, 0);
+                    <option value="@x">@ts.Hours hours @(ts.Minutes > 0 ? ", " + ts.Minutes + " minutes" : "")</option>    
+                }
+            }
+            </InputSelect>
+            <ValidationMessage For="@(() => Booking.DurationMinutes)" />
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingShortDescription" class="font-weight-bold">Short Description: </label>
+        </div>
+        <div class="col-sm-9">
+            <InputText id="bookingShortDescription" class="form-control" @bind-Value="@Booking.ShortDescription" placeholder=""></InputText>
+            <ValidationMessage For="@(() => Booking.ShortDescription)" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingDetails" class="font-weight-bold">Details (optional): </label>
+        </div>
+        <div class="col-sm-9">
+            <InputTextArea id="bookingDetails" class="form-control" @bind-Value="@Booking.Details" placeholder=""></InputTextArea>
+            <ValidationMessage For="@(() => Booking.Details)" />
+        </div>
+    </div>
+
+
+
+</div>

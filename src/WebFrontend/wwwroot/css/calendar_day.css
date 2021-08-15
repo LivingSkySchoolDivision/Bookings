@@ -6,7 +6,7 @@
 
 .daycalendar_day {
     border: 1px solid #C0C0C0;
-    width: 700px;
+    width: 500px;
 }
 
 .daycalendar_hour_block {
@@ -41,8 +41,15 @@
     border-radius: 5px;
     padding: 5px;
     box-sizing: border-box;
-    width: 575px;
+    width: 400px;
     z-index: 999;
     overflow: auto;
     scrollbar-width: thin;
+    opacity: 0.8;
+}
+
+.daycalendar_event_ghost {
+    background-color: rgba(255,255,255,0.5);
+    box-sizing: border-box;
+    border: 3px dashed green;
 }

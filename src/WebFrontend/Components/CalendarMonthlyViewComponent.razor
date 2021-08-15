@@ -59,7 +59,7 @@
             <button class="btn btn-link" @onclick="OnClick_PrevMonth">Previous Month</button>
             <button class="btn btn-link" @onclick="OnClick_NextMonth">Next Month</button>
         </div>
-    <b>@(Helpers.MonthName(_startDate.Month))</b>
+    <b>@(Helpers.MonthName(_startDate.Month)), @(_startDate.Year)</b>
     </div>
     <br/>
     <div class="calendar_month">
