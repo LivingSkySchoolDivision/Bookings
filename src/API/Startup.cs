@@ -46,8 +46,10 @@ namespace APILSSD.Bookings.API
             });
 
             services.AddSingleton<MongoDbConnection>();
-            services.AddSingleton<IRepository<Resource>, MongoRepository<Resource>>();            
-            services.AddSingleton<ResourceService>();
+            services.AddSingleton<IRepository<Resource>, MongoRepository<Resource>>();  
+            services.AddSingleton<IRepository<SingleBooking>, MongoRepository<SingleBooking>>();            
+            services.AddSingleton<ResourceService>();         
+            services.AddSingleton<BookingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
