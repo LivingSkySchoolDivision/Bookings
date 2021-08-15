@@ -22,98 +22,22 @@
     public int day { get; set; } = DateTime.Today.Day;
     
 
-    Resource selectedResource = null;
-    List<SingleBooking> thisResourceBookings = new List<SingleBooking>();
-    DateTime selectedDay;
-   
+    Resource selectedResource = null;   
 
     protected override void OnInitialized()
     {
-        // test bookings
-        thisResourceBookings.Add(
-                new SingleBooking() {
-                BookingDate = new DateTime(2021,08, 09),
-                StartMinuteUTC = 45,
-                StartHourUTC = 13,
-                DurationMinutes = 450,
-                ShortDescription = "TEST BOOKING",
-                Requestor = "john.smith",
-                Details = "Details would go here",
-                ResourceGUID = new Guid(),
-                Id = Guid.NewGuid()
-            });
-        thisResourceBookings.Add(
-                new SingleBooking() {
-                BookingDate = new DateTime(2021,08, 09),
-                StartMinuteUTC = 45,
-                StartHourUTC = 15,
-                DurationMinutes = 450,
-                ShortDescription = "TEST BOOKING",
-                Requestor = "john.smith",
-                Details = "Details would go here",
-                ResourceGUID = new Guid(),
-                Id = Guid.NewGuid()
-            });
-        thisResourceBookings.Add(
-                new SingleBooking() {
-                BookingDate = new DateTime(2021,08, 09),
-                StartMinuteUTC = 0,
-                StartHourUTC = 8,
-                DurationMinutes = 450,
-                ShortDescription = "TEST BOOKING",
-                Requestor = "john.smith",
-                Details = "Details would go here",
-                ResourceGUID = new Guid(),
-                Id = Guid.NewGuid()
-            });
-        thisResourceBookings.Add(
-                new SingleBooking() {
-                BookingDate = new DateTime(2021,08, 12),
-                StartMinuteUTC = 00,
-                StartHourUTC = 8,
-                DurationMinutes = 450,
-                ShortDescription = "TEST BOOKING",
-                Requestor = "john.smith",
-                Details = "Details would go here",
-                ResourceGUID = new Guid(),
-                Id = Guid.NewGuid()
-            });
-        thisResourceBookings.Add(
-                new SingleBooking() {
-                BookingDate = new DateTime(2021,08, 2),
-                StartMinuteUTC = 00,
-                StartHourUTC = 8,
-                DurationMinutes = 450,
-                ShortDescription = "TEST BOOKING",
-                Requestor = "john.smith",
-                Details = "Details would go here",
-                ResourceGUID = new Guid(),
-                Id = Guid.NewGuid()
-            });
-
-
         if (year == 0) {
-            year = DateTime.Today.Year;
+            year = DateTime.Now.Year;
         }
 
         if (month == 0) {
-            month = DateTime.Today.Month;
+            month = DateTime.Now.Month;
         }
-
-        if (day == 0) {
-            day = DateTime.Today.Day;
-        }
-
 
         if (resourceguid != null) 
         {
             selectedResource = _resourceService.Get(resourceguid);
-        }      
-
-        selectedDay = new DateTime(year, month, day);
-                
-        // Load bookings appropriate for how the data is displayed
-        
+        }            
     } 
 }
 
@@ -127,5 +51,5 @@
 [<a href="/Resources/@(selectedResource.Id.ToString())/Book/">Book this resource</a>]<br/>
 </p>
 <hr/>
-<WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Bookings="@thisResourceBookings" Year="@year" Month="@month" Today="@selectedDay" />
+<WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(DateTime.Now)" />
 }

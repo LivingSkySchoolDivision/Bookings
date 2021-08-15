@@ -53,6 +53,7 @@
         height: 100%;
         box-sizing: border-box;
         border: 2px solid slateblue;
+        z-index: -99;
     }
 
     .calendar_heading {

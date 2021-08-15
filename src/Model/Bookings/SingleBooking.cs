@@ -1,10 +1,13 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace LSSD.Bookings
 {
     public class SingleBooking : IGUIDable
     {
-        public DateTime BookingDate { get; set; }        
+        public DateTime BookingDate { get; set; }  
+        [Required]
+        [MinLength(5, ErrorMessage = "{0} must be at least {1} characters")]      
         public string ShortDescription { get; set; }
         public string Requestor { get; set; }
         public string Details { get; set; }

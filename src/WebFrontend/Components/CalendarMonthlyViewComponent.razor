@@ -1,12 +1,11 @@
 @using LSSD.Bookings
 
 @code {
+    [Inject]
+    BookingService _bookingService { get; set; }
 
     [Parameter]
     public Guid resourceGuid { get; set; }
-
-    [Parameter]
-    public List<SingleBooking> Bookings { get; set; }
 
     [Parameter]
     public int Year { get; set; }
@@ -16,35 +15,46 @@
 
     [Parameter]
     public DateTime Today { get; set; }
-       
+
+      
     DateTime _startDate;
 
     Dictionary<int, List<SingleBooking>> bookingsThisMonth = new Dictionary<int, List<SingleBooking>>();
 
     protected override void OnInitialized()
     {
-        _startDate = new DateTime(Year, Month, 1);  
+        _startDate = new DateTime(Year, Month, 1); 
 
-        // Organize bookings into dates that would be displayed
-        List<SingleBooking> raw_bookingsthismonth = Bookings.Where(x =>
-            (x.BookingDate.Year == _startDate.Year) &&
-            (x.BookingDate.Month == _startDate.Month)
+        ReloadBookings();        
+    } 
+
+    protected void OnClick_PrevMonth() {
+        _startDate = _startDate.AddMonths(-1);
+        ReloadBookings();
+    }
+
+    protected void OnClick_NextMonth() {
+        _startDate = _startDate.AddMonths(1);
+        ReloadBookings();
+    }
+
+    protected void ReloadBookings() {
+        bookingsThisMonth.Clear();
+
+        // Load bookings for given month
+        List<SingleBooking> raw_bookingsthismonth = _bookingService.Find(x =>
+            x.ResourceGUID == resourceGuid &&
+            x.BookingDate.Year == _startDate.Year &&
+            x.BookingDate.Month == _startDate.Month
             ).ToList();
 
+        // Sort by day
         foreach(SingleBooking booking in raw_bookingsthismonth) {
            if(!bookingsThisMonth.ContainsKey(booking.BookingDate.Day)) {
                bookingsThisMonth.Add(booking.BookingDate.Day, new List<SingleBooking>());
            }
            bookingsThisMonth[booking.BookingDate.Day].Add(booking);
         }
-    } 
-
-    protected void OnClick_PrevMonth() {
-        _startDate = _startDate.AddMonths(-1);
-    }
-
-    protected void OnClick_NextMonth() {
-        _startDate = _startDate.AddMonths(1);
     }
 
 }
