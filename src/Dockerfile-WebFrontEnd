@@ -7,9 +7,9 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["src/WebFrontend/WebFrontend.csproj", "src/WebFrontend/"]
-COPY ["src/DB/DB.csproj", "src/DB/"]
-COPY ["src/Model/Model.csproj", "src/Model/"]
+COPY ["WebFrontend/WebFrontend.csproj", "WebFrontend/"]
+COPY ["DB/DB.csproj", "DB/"]
+COPY ["Model/Model.csproj", "Model/"]
 RUN dotnet restore "WebFrontend/WebFrontend.csproj"
 COPY . .
 WORKDIR "/src/WebFrontend"
