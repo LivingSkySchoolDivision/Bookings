@@ -38,6 +38,17 @@ namespace WebFrontend
         {
             return _repository.GetById(id);
         }
+
+        public IEnumerable<Resource> GetForClaims(IEnumerable<string> Claims) {
+
+            return _repository.Find(x => 
+                x.OIDC_CanEditBookings.Intersect(Claims).Any() ||
+                x.OIDC_CanViewResource.Intersect(Claims).Any() ||
+                x.OIDC_CanEditBookings.Count == 0 ||
+                x.OIDC_CanViewResource.Count == 0
+            ).ToList();
+
+        }
         
 
     }

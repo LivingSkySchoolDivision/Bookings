@@ -1,7 +1,10 @@
 @page "/"
 @using LSSD.Bookings
+@using Microsoft.Extensions.Configuration
 @using WebFrontend.Components
 @code {
+    [Inject]
+    IConfiguration Configuration { get; set; }
     
     [Inject]
     ResourceService _repository { get; set; }
@@ -29,6 +32,9 @@
 }
 <h1>LSSD Resource Booking System</h1>
 
+<AuthorizeView>
+    <Authorized>
+        
 <div class="resource_group_container">
 @foreach(ResourceGroup group in _groupRepository.GetAll().OrderBy(x => x.Name))
 {
@@ -51,5 +57,8 @@
 </div>
 
 <br/><hr>
-<a href="/Config">Config</a>
-<LoginDisplay />
+        @if (context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
+            <a href="/Config">Config</a>
+        }
+    </Authorized>
+</AuthorizeView>

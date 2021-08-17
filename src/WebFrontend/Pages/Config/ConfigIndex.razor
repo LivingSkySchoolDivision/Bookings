@@ -1,66 +1,81 @@
 @page "/Config"
+@using System.Security.Claims
 @using LSSD.Bookings
-@code {
+@using Microsoft.Extensions.Configuration
+<AuthorizeView>
+    <Authorized>
+        @code {
+            [Inject]
+            ResourceService _resourceService { get; set; }
+            
+            [Inject]
+            ResourceGroupService _resourceGroupService { get; set; }
 
-    [Inject]
-    ResourceService _resourceService { get; set; }
-
-    
-    [Inject]
-    ResourceGroupService _resourceGroupService { get; set; }
-
-}
-<div class="page">
-    <div class="section">
-    <h1>Configure Resource Groups</h1>
-    <a href="/Config/ResourceGroups/New">New Resource Group</a>
-
-    <table class="table">
-        <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-        </thead>    
-        <tbody>
-        @foreach(ResourceGroup resource in _resourceGroupService.GetAll()) 
-        {
-            <tr>
-                <td><a href="/Config/ResourceGroups/@(resource.Id.ToString())">@(resource.Id.ToString())</a></td>
-                <td>@resource.Name</td>
-                <td>@resource.Description</td>
-            </tr>    
+            [Inject]
+            IConfiguration Configuration { get; set; }
         }
-        </tbody>
-    </table>
 
+        @if (!context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
+            <WebFrontend.Components.AccessDeniedComponent />
+        } else {
 
-    </div>
-<br/><br/>
-<div class="section">
-    <h1>Configure Resources</h1>
-    <a href="/Config/Resources/New">New Resource</a>
+        <div class="page">
 
-    <table class="table">
-        <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-        </thead>    
-        <tbody>
-        @foreach(Resource resource in _resourceService.GetAll()) 
-        {
-            <tr>
-                <td><a href="/Config/Resources/@(resource.Id.ToString())">@(resource.Id.ToString())</a></td>
-                <td>@resource.Name
-                    @if(!resource.IsEnabled) 
-                    {
-                        <i> (DISABLED)</i>
-                    }
-                </td>
-                <td>@resource.Description</td>
-            </tr>    
+            <div class="section">
+            <h1>Configure Resource Groups</h1>
+            <a href="/Config/ResourceGroups/New">New Resource Group</a>
+
+            <table class="table">
+                <thead>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                </thead>    
+                <tbody>
+                @foreach(ResourceGroup resource in _resourceGroupService.GetAll()) 
+                {
+                    <tr>
+                        <td><a href="/Config/ResourceGroups/@(resource.Id.ToString())">@(resource.Id.ToString())</a></td>
+                        <td>@resource.Name</td>
+                        <td>@resource.Description</td>
+                    </tr>    
+                }
+                </tbody>
+            </table>
+
+            </div>
+        <br/><br/>
+        <div class="section">
+            <h1>Configure Resources</h1>
+            <a href="/Config/Resources/New">New Resource</a>
+
+            <table class="table">
+                <thead>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                </thead>    
+                <tbody>
+                @foreach(Resource resource in _resourceService.GetAll()) 
+                {
+                    <tr>
+                        <td><a href="/Config/Resources/@(resource.Id.ToString())">@(resource.Id.ToString())</a></td>
+                        <td>@resource.Name
+                            @if(!resource.IsEnabled) 
+                            {
+                                <i> (DISABLED)</i>
+                            }
+                        </td>
+                        <td>@resource.Description</td>
+                    </tr>    
+                }
+                </tbody>
+            </table>
+        </div>
+        </div>
         }
-        </tbody>
-    </table>
-</div>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <WebFrontend.Components.LogInComponent />
+    </NotAuthorized>
+</AuthorizeView>
