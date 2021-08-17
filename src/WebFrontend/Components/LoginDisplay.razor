@@ -1,6 +1,15 @@
-﻿<AuthorizeView>
+﻿@using System.Security.Claims
+<AuthorizeView>
     <Authorized>
         Hello, @context.User.Identity.Name!
+
+        @foreach(Claim claim in context.User.Claims) 
+        {
+            <tr>
+                <td>@(claim.Subject.Label)</td>
+                <td>@(claim.Value.ToString())</td>
+            </tr>
+        }
         <form method="post" action="Account/LogOut">
             <button type="submit" class="nav-link btn btn-link">Log out</button>
         </form>
