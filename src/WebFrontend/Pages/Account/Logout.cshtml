@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [IgnoreAntiforgeryToken]
 @functions{
-    public async Task OnPost()
+    public async Task OnGet()
     {
         await HttpContext.SignOutAsync("OIDC", new AuthenticationProperties { RedirectUri = "/" });
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

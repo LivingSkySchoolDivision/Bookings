@@ -10,7 +10,7 @@
             IConfiguration Configuration { get; set; }
 
             [Inject]
-            ResourceService _repo {get;set;}
+            ResourceGroupService _repo {get;set;}
 
             [Parameter]
             public string resourceguid {get;set;}
@@ -25,9 +25,9 @@
         <div style="width: 80%; margin-left: auto; margin-right: auto;">
 
         @if (!string.IsNullOrEmpty(resourceguid)) {
-            Resource resource = _repo.Get(resourceguid);
-            if (resource != null) {
-                <WebFrontend.Components.EditResourceGroupComponent Resource="@resource" BackRoute="/Config/" />
+            ResourceGroup resourcegroup = _repo.Get(resourceguid);
+            if (resourcegroup != null) {
+                <WebFrontend.Components.EditResourceGroupComponent ResourceGroup="@resourcegroup" BackRoute="/Config/" />
             } else {
                 <p>Resource not found.</p>
             }

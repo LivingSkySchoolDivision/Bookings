@@ -22,6 +22,8 @@
 
     ResourceGroup thisResourceGroup = new ResourceGroup();
     
+    string newViewGroupString;
+    string newEditGroupString;
 
     protected void HandleValidSubmit()
     {
@@ -37,13 +39,13 @@
     {
         // Save the resource via the service
         _repository.Update(Resource);
-        NavigationManager.NavigateTo(BackRoute); 
+        NavigationManager.NavigateTo(BackRoute);
     }
 
     protected override void OnInitialized()
     {
         if (CreateNew) {
-            Resource = new Resource() 
+            Resource = new Resource()
             {
                 Id = new Guid(),
                 Name = "New Resource",
@@ -56,7 +58,35 @@
     protected void OnClick_Cancel()
     {
         // Go back
-        NavigationManager.NavigateTo(BackRoute);        
+        NavigationManager.NavigateTo(BackRoute);
+    }
+
+    protected void OnClick_RemoveViewGroup(string GroupId)
+    {
+        if (!string.IsNullOrEmpty(GroupId)) {
+            this.Resource.OIDC_CanViewResource.Remove(GroupId);
+        }
+    }
+
+    protected void OnClick_RemoveEditGroup(string GroupId)
+    {
+        if (!string.IsNullOrEmpty(GroupId)) {
+            this.Resource.OIDC_CanEditBookings.Remove(GroupId);
+        }
+    }
+
+    protected void OnClick_AddViewGroup(string GroupId)
+    {
+        if (!string.IsNullOrEmpty(GroupId)) {            
+            this.Resource.OIDC_CanViewResource.Add(GroupId);
+        }
+    }
+
+    protected void OnClick_AddEditGroup(string GroupId)
+    {
+        if (!string.IsNullOrEmpty(GroupId)) {
+            this.Resource.OIDC_CanEditBookings.Add(GroupId);
+        }
     }
 }
 
@@ -90,20 +120,64 @@
             </InputSelect>
             <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.GroupGUID)" />
         </div>
+
+        <div class="form-group row">
+            <label for="resourceName" class="col-sm-3">OIDC Group IDs - Can view: </label>
+        </div>
+        <div class="form-group row">
+        
+            @if (Resource.OIDC_CanViewResource.Count > 0) {
+                @foreach(string groupid in Resource.OIDC_CanViewResource) {
+                    <div class="offset-sm-1 col-sm-8">
+                        <span>@groupid</span>
+                        <button type="button" @onclick="@(() => OnClick_RemoveViewGroup(groupid))" class="btn btn-link">Remove</button>
+                    </div>
+                }           
+            } else {
+                <div class="offset-sm-1 col-sm-8"><i>Any user / no security restrictions</i></div>
+            }
+            
+            <InputText id="resourceName" class="form-control offset-sm-1  col-sm-10" @bind-Value="@newViewGroupString"></InputText>
+            <button type="button" @onclick="@(() => OnClick_AddViewGroup(newViewGroupString))" class="btn btn-link">Add</button>
+
+        </div>
+        
+        <div class="form-group row">
+            <label for="resourceName" class="col-sm-3">OIDC Group IDs - Can edit/cancel: </label>
+        </div>
+        <div class="form-group row">
+            @if (Resource.OIDC_CanEditBookings.Count > 0) {
+                @foreach(string groupid in Resource.OIDC_CanEditBookings) {
+                    <div class="offset-sm-1 col-sm-8">
+                        <span>@groupid</span>
+                        <button type="button" @onclick="@(() => OnClick_RemoveEditGroup(groupid))" class="btn btn-link">Remove</button>
+                    </div>
+                }           
+            } else {
+                <div class="offset-sm-1 col-sm-8"><i>Any user / no security restrictions</i></div>
+            }
+            
+            <InputText id="resourceName" class="form-control offset-sm-1 col-sm-10" @bind-Value="@newEditGroupString"></InputText>
+            <button type="button" @onclick="@(() => OnClick_AddEditGroup(newEditGroupString))" class="btn btn-link">Add</button>
+
+        </div>        
+
         <div class="form-row">
-            <div class="offset-sm-3 col-sm-8">
-                <InputCheckbox id="resourceEnabled" @bind-Value="@Resource.IsEnabled"></InputCheckbox>
-                <label for="resourceEnabled" class="">Enabled</label>
+            <div class="col-sm-3">
+                Resource is enabled?
+            </div>
+            <div class="col-sm-8">
+                <InputCheckbox id="resourceEnabled" @bind-Value="@Resource.IsEnabled"></InputCheckbox>                
                 <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Resource.IsEnabled)" />
             </div>
         </div>
-    </div>    
+    </div>
     <div class="form-group">
         <div class="form-row">
             <div class="col">
                 <button type="submit" class="btn btn-primary btn-block">Save</button>
             </div>
-            @if (!string.IsNullOrEmpty(BackRoute)) 
+            @if (!string.IsNullOrEmpty(BackRoute))
             {
             <div class="col">
                 <button type="button" @onclick="OnClick_Cancel" class="btn btn-secondary btn-block">Cancel</button>
@@ -111,8 +185,8 @@
             }
         </div>
     </div>
-</EditForm> 
-    
+</EditForm>
+
 } else {
     <i>Null resource</i>
 }

@@ -12,21 +12,9 @@
     [Inject]
     ResourceGroupService _groupRepository { get; set; }
 
-    Dictionary<Guid, List<Resource>> _allResources = new Dictionary<Guid, List<Resource>>();
-
     protected override void OnInitialized()
     {
-        _allResources = new Dictionary<Guid, List<Resource>>();
-
-        foreach(Resource resource in _repository.GetEnabled())
-        {
-            if (!_allResources.ContainsKey(resource.GroupGUID))
-            {
-                _allResources.Add(resource.GroupGUID, new List<Resource>());
-            }
-
-            _allResources[resource.GroupGUID].Add(resource);
-        }
+        
     }
 
 }
@@ -36,8 +24,23 @@
     <Authorized>
         
 <div class="resource_group_container">
+@{
+    List<Resource> thisUserResources = _repository.GetForClaims(context.User.Claims.Select(x => x.Value).ToList()).ToList();
+    Dictionary<Guid, List<Resource>> _allResources = new Dictionary<Guid, List<Resource>>();
+
+    foreach(Resource resource in _repository.GetEnabled())
+    {
+        if (!_allResources.ContainsKey(resource.GroupGUID))
+        {
+            _allResources.Add(resource.GroupGUID, new List<Resource>());
+        }
+
+        _allResources[resource.GroupGUID].Add(resource);
+    }
+}
+
 @foreach(ResourceGroup group in _groupRepository.GetAll().OrderBy(x => x.Name))
-{
+{    
     @if (_allResources.ContainsKey(group.Id)) 
     {
         <div class="resource_group">
