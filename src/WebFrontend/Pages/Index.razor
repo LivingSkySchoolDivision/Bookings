@@ -1,6 +1,10 @@
 @page "/"
 @using LSSD.Bookings
+@using Microsoft.Extensions.Configuration
+@using WebFrontend.Components
 @code {
+    [Inject]
+    IConfiguration Configuration { get; set; }
     
     [Inject]
     ResourceService _repository { get; set; }
@@ -8,29 +12,35 @@
     [Inject]
     ResourceGroupService _groupRepository { get; set; }
 
-    Dictionary<Guid, List<Resource>> _allResources = new Dictionary<Guid, List<Resource>>();
-
     protected override void OnInitialized()
     {
-        _allResources = new Dictionary<Guid, List<Resource>>();
-
-        foreach(Resource resource in _repository.GetEnabled())
-        {
-            if (!_allResources.ContainsKey(resource.GroupGUID))
-            {
-                _allResources.Add(resource.GroupGUID, new List<Resource>());
-            }
-
-            _allResources[resource.GroupGUID].Add(resource);
-        }
+        
     }
 
 }
 <h1>LSSD Resource Booking System</h1>
 
+<AuthorizeView>
+    <Authorized>
+        
 <div class="resource_group_container">
+@{
+    List<Resource> thisUserResources = _repository.GetForClaims(context.User.Claims.Select(x => x.Value).ToList()).ToList();
+    Dictionary<Guid, List<Resource>> _allResources = new Dictionary<Guid, List<Resource>>();
+
+    foreach(Resource resource in _repository.GetEnabled())
+    {
+        if (!_allResources.ContainsKey(resource.GroupGUID))
+        {
+            _allResources.Add(resource.GroupGUID, new List<Resource>());
+        }
+
+        _allResources[resource.GroupGUID].Add(resource);
+    }
+}
+
 @foreach(ResourceGroup group in _groupRepository.GetAll().OrderBy(x => x.Name))
-{
+{    
     @if (_allResources.ContainsKey(group.Id)) 
     {
         <div class="resource_group">
@@ -50,4 +60,8 @@
 </div>
 
 <br/><hr>
-<a href="/Config">Config</a>
+        @if (context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
+            <a href="/Config">Config</a>
+        }
+    </Authorized>
+</AuthorizeView>

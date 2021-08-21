@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace LSSD.Bookings
 {
@@ -9,5 +10,7 @@ namespace LSSD.Bookings
         public Guid Id { get; set; }
         public Guid GroupGUID { get; set; }
         public bool IsEnabled { get; set; }
+        public List<string> OIDC_CanViewResource { get; set; } = new List<string>();
+        public List<string> OIDC_CanEditBookings { get; set; } = new List<string>();
     }
 }

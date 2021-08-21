@@ -1,26 +1,44 @@
 @page "/Config/ResourceGroups/{resourceguid}"
 @using LSSD.Bookings
+@using Microsoft.Extensions.Configuration
 
-@code {
-    [Inject]
-    ResourceService _repo {get;set;}
+<AuthorizeView>
+    <Authorized>
 
-    [Parameter]
-    public string resourceguid {get;set;}
-}
+        @code {
+            [Inject]
+            IConfiguration Configuration { get; set; }
 
-<h1>Edit Resource Group</h1>
-<div style="width: 80%; margin-left: auto; margin-right: auto;">
+            [Inject]
+            ResourceGroupService _repo {get;set;}
 
-@if (!string.IsNullOrEmpty(resourceguid)) {
-    Resource resource = _repo.Get(resourceguid);
-    if (resource != null) {
-        <WebFrontend.Components.EditResourceGroupComponent Resource="@resource" BackRoute="/Config/" />
-    } else {
-        <p>Resource not found.</p>
-    }
-} else {
-    <p>Resource not found (empty).</p>
-}
+            [Parameter]
+            public string resourceguid {get;set;}
+        }
 
-</div>
+        @if (!context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
+            <WebFrontend.Components.AccessDeniedComponent />
+        } else {
+            
+
+        <h1>Edit Resource Group</h1>
+        <div style="width: 80%; margin-left: auto; margin-right: auto;">
+
+        @if (!string.IsNullOrEmpty(resourceguid)) {
+            ResourceGroup resourcegroup = _repo.Get(resourceguid);
+            if (resourcegroup != null) {
+                <WebFrontend.Components.EditResourceGroupComponent ResourceGroup="@resourcegroup" BackRoute="/Config/" />
+            } else {
+                <p>Resource not found.</p>
+            }
+        } else {
+            <p>Resource not found (empty).</p>
+        }
+
+        </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <WebFrontend.Components.LogInComponent />
+    </NotAuthorized>
+</AuthorizeView>

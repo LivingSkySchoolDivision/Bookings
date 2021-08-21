@@ -1,2 +1,16 @@
 @inherits LayoutComponentBase
-<div class="main">@Body</div>
+
+@* Header goes here *@
+
+<AuthorizeView>
+    <Authorized>
+        <div class="main">@Body</div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="main">
+            <a href="Account/Login">Log in</a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
