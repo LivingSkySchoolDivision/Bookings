@@ -1,0 +1,56 @@
+@page "/{resourceguid}/Booking/{bookingguid}"
+@using LSSD.Bookings
+
+@code {
+
+    [Inject]
+    ResourceService _resourceService { get; set; }
+
+    [Inject]
+    BookingService _bookingService { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    [Parameter]
+    public string bookingguid { get; set; }
+    [Parameter]
+    public string resourceguid { get; set; }
+
+    SingleBooking booking = null;   
+    Resource resource = null;
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(resourceguid) && !string.IsNullOrEmpty(bookingguid))
+        {
+            booking = _bookingService.Get(bookingguid);                        
+        }
+    }
+
+    protected void HandleInValidSubmit()
+    {
+        // Do nothing
+    }
+
+    protected void OnClick_Back()
+    {
+        NavigationManager.NavigateTo("/Resources/" + resourceguid);
+    }
+
+}
+
+@if(booking == null) {
+    <p>Booking not found</p>
+} else {
+    if (resource == null) {
+        <p>Resource not found</p>
+    } else {
+        <h1>@booking.ShortDescription</h1>
+        <p>
+        [<a href="/Resources/@(resourceguid)">Back</a>]<br/>
+        </p>
+        <hr/>
+        <WebFrontend.Components.SingleBookingViewComponent Booking="@booking" BookableResource="@resource" />
+    }
+}

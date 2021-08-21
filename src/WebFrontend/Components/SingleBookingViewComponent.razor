@@ -1,0 +1,70 @@
+@using LSSD.Bookings;
+
+@code {
+    [Parameter]
+    public SingleBooking Booking { get; set; }
+
+    [Parameter]
+    public Resource BookableResource { get; set; }
+}
+
+<div class="form-group">
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="resourceName" class="font-weight-bold">Resource: </label>
+        </div>
+        <div class="col-sm-4">
+            @(BookableResource.Name)
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingRequestorActual" class="font-weight-bold">Requestor (actual): </label>
+        </div>
+        <div class="col-sm-4">
+            @(Booking.Requestor)    
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingRequestor" class="font-weight-bold">Start Time: </label>
+        </div>
+        <div class="col-sm-4">
+            @(Booking.StartTimeUTC.ToShortTimeString())
+        </div>
+        
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingDuration" class="font-weight-bold">End Time: </label>
+        </div>
+        <div class="col-sm-4">
+            @(Booking.EndTimeUTC.ToShortTimeString()) (@Booking.DurationMinutes minutes)
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingShortDescription" class="font-weight-bold">Short Description: </label>
+        </div>
+        <div class="col-sm-9">
+            @Booking.ShortDescription
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingDetails" class="font-weight-bold">Details (optional): </label>
+        </div>
+        <div class="col-sm-9">
+            @Booking.Details
+        </div>
+    </div>
+
+
+
+</div>
