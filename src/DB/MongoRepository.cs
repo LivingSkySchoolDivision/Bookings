@@ -68,7 +68,7 @@ namespace LSSD.Bookings.Data
             {
                 return default(T);
             }
-            catch (Exception ex) 
+            catch
             {
                 throw;
             }

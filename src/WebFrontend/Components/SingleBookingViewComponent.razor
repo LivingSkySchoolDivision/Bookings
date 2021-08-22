@@ -1,0 +1,107 @@
+@using LSSD.Bookings;
+@using System.Security.Claims
+@using System.Linq;
+@using System.Collections.Generic;
+@using Microsoft.Extensions.Configuration
+
+@code {
+    [Parameter]
+    public SingleBooking Booking { get; set; }
+
+    [Parameter]
+    public Resource BookableResource { get; set; }
+
+    [Parameter]
+    public List<string> UserClaims { get; set; }
+
+}
+
+<div class="form-group">
+
+    @if(Booking.IsCancelled) {
+        
+        <div class="form-row">
+            <div class="col-sm-12" style="color: red; font-weight: bold;">
+                 BOOKING IS CANCELLED
+            </div>
+        </div>
+    }
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingShortDescription" class="font-weight-bold">Short Description: </label>
+        </div>
+        <div class="col-sm-9">
+            @Booking.ShortDescription
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="resourceName" class="font-weight-bold">Resource: </label>
+        </div>
+        <div class="col-sm-4">
+            @(BookableResource.Name)
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingRequestor" class="font-weight-bold">Date: </label>
+        </div>
+        <div class="col-sm-4">
+            @(Booking.BookingDate.ToLongDateString())
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingRequestor" class="font-weight-bold">Start Time: </label>
+        </div>
+        <div class="col-sm-4">
+            @(Booking.StartTimeUTC.ToShortTimeString())
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingDuration" class="font-weight-bold">End Time: </label>
+        </div>
+        <div class="col-sm-4">
+            @(Booking.EndTimeUTC.ToShortTimeString()) (@Booking.DurationMinutes minutes)
+        </div>
+    </div>
+    
+
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingDetails" class="font-weight-bold">Details (optional): </label>
+        </div>
+        <div class="col-sm-9">
+            @Booking.Details
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="col-sm-3">
+            <label for="bookingRequestorActual" class="font-weight-bold">Booked by: </label>
+        </div>
+        <div class="col-sm-4">
+            @(Booking.BookedByName)    
+        </div>
+    </div>
+
+    @if (Booking.IsCancelled)
+    {
+        <div class="form-row">
+            <div class="col-sm-3">
+                <label for="bookingShortDescription" class="font-weight-bold">Cancelled by: </label>
+            </div>
+            <div class="col-sm-9">
+                @Booking.CancelledBy
+            </div>
+        </div>
+
+    }
+
+</div>

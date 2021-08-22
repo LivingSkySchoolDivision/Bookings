@@ -1,6 +1,7 @@
 @page "/Resources/{resourceguid}/Book"
 @page "/Resources/{resourceguid}/Book/{year:int}/{month:int}/{day:int}"
 @using LSSD.Bookings
+@using System.Security.Claims
 
 @code {
 
@@ -49,7 +50,7 @@
             }
         
             newBooking = new SingleBooking() {
-                DurationMinutes = 450,
+                DurationMinutes = selectedResource.DefaultBookingMinutes > 0 ? selectedResource.DefaultBookingMinutes : 60,
                 StartHourUTC = 8,
                 StartMinuteUTC = 0,
                 BookingDate = new DateTime(year, month, day),
@@ -70,8 +71,10 @@
 
     protected void HandleValidSubmit()
     {
-        // Save the data
+
         newBooking.CreatedUTC = DateTime.Now.ToUniversalTime();
+
+        // Save the data
         thisResourceBookings.Add(newBooking);
         _bookingService.Insert(newBooking);
 
@@ -86,62 +89,83 @@
 
     protected void OnClick_Back()
     {
-        NavigationManager.NavigateTo("/Resources/" + resourceguid);
+        NavigationManager.NavigateTo($"/Resources/{resourceguid}/{year}/{month}");
     }
-
 }
 
 @if(selectedResource == null) {
-<p>Resource not found</p>
+    <p>Resource not found</p>
 } else {
-<h1>@selectedResource.Name</h1>
-<p>
-[<a href="/Resources/@(selectedResource.Id.ToString())">Back</a>]<br/>
-</p>
-<hr/>
-<div class="daycalendar_day_container">
-    <div class="daycalendar_day_newbooking_form">
-        <h2>Create new booking</h2>
-         <EditForm Model="newBooking" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInValidSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            
-            <WebFrontend.Components.SingleBookingEditComponent Booking="@newBooking" BookableResource="@selectedResource" />
-            <div class="form-group">
-                <div class="form-row">
-                    <div class="col">
-                        <button type="submit" class="btn btn-primary btn-block">Create booking</button>
-                    </div>
-                    <div class="col">
-                        <button type="button" @onclick="OnClick_Back" class="btn btn-secondary btn-block">Cancel and go back</button>
-                    </div>
-                </div>
-            </div>
-         </EditForm>
-    </div>
-    <div style="padding: 10px;">
-        <h3>@(newBooking.BookingDate.ToString("dddd, MMMM dd, yyyy"))</h3>
-        <div class="daycalendar_day">
-        @for(int hour=6;hour<24;hour++) {
-            <div class="daycalendar_hour_block">
-                <div class="daycalendar_day_hour daycalendar_first_hour">
-                    <div class="daycalendar_day_hour_label">@hour:00</div>
-                </div>
-                <div class="daycalendar_day_hour daycalendar_second_hour">
-                    <div class="daycalendar_day_hour_label">@hour:30</div>
-                </div>
-                <div style="position: absolute; top: 0; left: 50px;">
-                    @foreach(SingleBooking booking  in thisResourceBookings.Where(x => x.StartTimeUTC.Hour == @hour))
+    
+<AuthorizeView>
+    @* EditForm interferes with the "context" property so we need to rename it to something else if there is an EditForm directly inside it *@
+    <Authorized Context="Auth"> 
+        @{
+            newBooking.BookedByName = Auth.User.Identity.Name;
+            string objectId = "";
+            foreach(Claim claim in Auth.User.Claims) 
+            {
+                foreach(KeyValuePair<string, string> property in claim.Properties) 
+                {
+                    if (property.Value == "oid") 
                     {
-                        <div class="daycalendar_event" style="top: @((booking.StartTimeUTC.Minute/15)*13)px; height:@((booking.DurationMinutes/15)*13)px">
-                            <b>@booking.ShortDescription</b><br/>
-                            @(booking.StartTimeUTC.ToShortTimeString()) to @(booking.EndTimeUTC.ToShortTimeString())
-                        </div>
+                        objectId = claim.Value;
                     }
+                }   
+            }
+            newBooking.BookedByObjectId = objectId;
+        }
+        <h1>@selectedResource.Name</h1>
+        <p>
+        [<a href="/Resources/@(selectedResource.Id.ToString())/@(year)/@(month)">Back</a>]<br/>
+        </p>
+        <hr/>
+
+        <div class="daycalendar_day_container">
+            <div class="daycalendar_day_newbooking_form">
+                <h2>Create new booking</h2>
+                <EditForm Model="newBooking" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <WebFrontend.Components.SingleBookingEditComponent Booking="@newBooking" BookableResource="@selectedResource" />
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary btn-block">Create booking</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" @onclick="OnClick_Back" class="btn btn-secondary btn-block">Cancel and go back</button>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+            <div style="padding: 10px;">
+                <h3>@(newBooking.BookingDate.ToString("dddd, MMMM dd, yyyy"))</h3>
+                <div class="daycalendar_day">
+                @for(int hour=6;hour<24;hour++) {
+                    <div class="daycalendar_hour_block">
+                        <div class="daycalendar_day_hour daycalendar_first_hour">
+                            <div class="daycalendar_day_hour_label">@hour:00</div>
+                        </div>
+                        <div class="daycalendar_day_hour daycalendar_second_hour">
+                            <div class="daycalendar_day_hour_label">@hour:30</div>
+                        </div>
+                        <div style="position: absolute; top: 0; left: 50px;">
+                            @foreach(SingleBooking booking  in thisResourceBookings.Where(x => x.StartTimeUTC.Hour == @hour))
+                            {
+                                <div class="daycalendar_event" style="top: @((booking.StartTimeUTC.Minute/15)*13)px; height:@((booking.DurationMinutes/15)*13)px">
+                                    <b>@booking.ShortDescription</b><br/>
+                                    @(booking.StartTimeUTC.ToShortTimeString()) to @(booking.EndTimeUTC.ToShortTimeString())
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
                 </div>
             </div>
-        }
         </div>
-    </div>
-</div>
+    </Authorized>
+</AuthorizeView>
 }

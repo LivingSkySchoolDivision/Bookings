@@ -45,7 +45,8 @@
         List<SingleBooking> raw_bookingsthismonth = _bookingService.Find(x =>
             x.ResourceGUID == resourceGuid &&
             x.BookingDate.Year == _startDate.Year &&
-            x.BookingDate.Month == _startDate.Month
+            x.BookingDate.Month == _startDate.Month &&
+            x.IsCancelled == false
             ).ToList();
 
         // Sort by day
@@ -99,8 +100,11 @@
                     @foreach(SingleBooking booking in bookingsThisMonth[dayCounter].OrderBy(x => x.StartTimeUTC.Hour).ThenBy(x => x.StartTimeUTC.Minute)) 
                     {
                         <div class="calendar_item_preview">
-                            <div class="calendar_item_preview_time">@(booking.StartTimeUTC.ToString("HH:mm"))-@(booking.EndTimeUTC.ToString("HH:mm"))</div>
-                            <div class="calendar_item_preview_description">@(booking.ShortDescription)</div>
+                                <div class="calendar_item_preview_time">@(booking.StartTimeUTC.ToString("HH:mm"))-@(booking.EndTimeUTC.ToString("HH:mm"))</div>
+                                <div class="calendar_item_preview_description">
+                                    <a href="/Resources/@(resourceGuid)/Booking/@(booking.Id)">@(booking.ShortDescription)</a>
+                                </div>
+                            
                         </div>
                     }
                 }

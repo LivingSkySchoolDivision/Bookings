@@ -12,5 +12,6 @@ namespace LSSD.Bookings
         public bool IsEnabled { get; set; }
         public List<string> OIDC_CanViewResource { get; set; } = new List<string>();
         public List<string> OIDC_CanEditBookings { get; set; } = new List<string>();
+        public int DefaultBookingMinutes { get; set; }
     }
 }
