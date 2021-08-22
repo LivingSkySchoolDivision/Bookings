@@ -1,5 +1,6 @@
-@page "/{resourceguid}/Booking/{bookingguid}"
+@page "/Resources/{resourceguid}/Booking/{bookingguid}"
 @using LSSD.Bookings
+@using Microsoft.Extensions.Configuration
 
 @code {
 
@@ -11,9 +12,13 @@
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
+    
+    [Inject]
+    IConfiguration Configuration { get; set; }
 
     [Parameter]
     public string bookingguid { get; set; }
+
     [Parameter]
     public string resourceguid { get; set; }
 
@@ -24,6 +29,7 @@
     {
         if (!string.IsNullOrEmpty(resourceguid) && !string.IsNullOrEmpty(bookingguid))
         {
+            resource = _resourceService.Get(resourceguid);
             booking = _bookingService.Get(bookingguid);                        
         }
     }
@@ -33,12 +39,26 @@
         // Do nothing
     }
 
-    protected void OnClick_Back()
+    protected void OnClick_CancelEvent(SingleBooking Booking, string Username)
     {
-        NavigationManager.NavigateTo("/Resources/" + resourceguid);
+        Booking.IsCancelled = true;
+        Booking.CancelledBy = Username;
+
+        _bookingService.Update(Booking);
+        
     }
 
+    protected void OnClick_UnCancelEvent(SingleBooking Booking, string Username)
+    {     
+        Booking.IsCancelled = false;
+        Booking.CancelledBy = "";
+        _bookingService.Update(Booking);
+    }
 }
+
+
+<AuthorizeView>
+    <Authorized>
 
 @if(booking == null) {
     <p>Booking not found</p>
@@ -48,9 +68,39 @@
     } else {
         <h1>@booking.ShortDescription</h1>
         <p>
-        [<a href="/Resources/@(resourceguid)">Back</a>]<br/>
+        [<a href="/Resources/@(resourceguid)/@(booking.BookingDate.Year)/@(booking.BookingDate.Month)">Back</a>]<br/>
         </p>
         <hr/>
         <WebFrontend.Components.SingleBookingViewComponent Booking="@booking" BookableResource="@resource" />
+        
+        @* Check here if the current user has the requisite claims to cancel this event, and if so, show cancel buttons *@
+        
+        @*
+            // The user's own objectID will show up in their claims, along with the objectids of all of
+            // their group memberships, so we can just use the claims list to validate.
+
+            // Does the user have edit permissions for this resource?
+            // Is the user a site admin?
+            // Is the user the user who entered the booking?
+        *@
+        
+        IEnumerable<string> userclaims = context.User.Claims.Select(x => x.Value);
+
+        @if (
+            resource.OIDC_CanEditBookings.Intersect(userclaims).Any() ||
+            userclaims.Contains(Configuration["OIDC:AdminGroupID"]) ||
+            userclaims.Contains(booking.BookedByObjectId)
+        )
+        {
+            @if(booking.IsCancelled) 
+            {
+                <button type="button" @onclick="() => OnClick_UnCancelEvent(booking, context.User.Identity.Name)" class="btn btn-outline-warning">Un-Cancel this event</button>
+            } else {
+                <button type="button" @onclick="() => OnClick_CancelEvent(booking, context.User.Identity.Name)" class="btn btn-outline-warning">Cancel this event</button>
+            }
+        }
     }
 }
+
+    </Authorized>
+</AuthorizeView>

@@ -15,17 +15,17 @@
         <div class="col-sm-3">
             <label for="resourceName" class="font-weight-bold">Resource: </label>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-9">
             @(BookableResource.Name)
         </div>
     </div>
-    
+
     <div class="form-row">
         <div class="col-sm-3">
-            <label for="bookingRequestorActual" class="font-weight-bold">Requestor (actual): </label>
+            <label for="resourceName" class="font-weight-bold">Date: </label>
         </div>
-        <div class="col-sm-4">
-            @(Booking.ActualRequestor)    
+        <div class="col-sm-9">
+            @Booking.BookingDate.ToString("dddd, MMMM dd, yyyy")
         </div>
     </div>
     
@@ -35,7 +35,7 @@
         </div>
         <div class="col-sm-2">
             <InputSelect id="bookingHour" class="form-control" @bind-Value="@Booking.StartHourUTC" placeholder="">
-            @for(int x = 6; x < 24; x++) {
+            @for(int x = 5; x < 24; x++) {
                 <option value="@x">@x</option>
             }
             </InputSelect>
@@ -43,7 +43,7 @@
         </div>
         <div class="col-sm-2">
             <InputSelect id="bookingMinute" class="form-control" @bind-Value="@Booking.StartMinuteUTC" placeholder="">
-            @for(int x = 0; x <= 60; x = x + 15) {
+            @for(int x = 0; x <= 60; x = x + 5) {
                 <option value="@x">@(x.ToString("D2"))</option>
             }
             </InputSelect>

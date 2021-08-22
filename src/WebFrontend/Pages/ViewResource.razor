@@ -41,15 +41,21 @@
     } 
 }
 
-@if(selectedResource == null) {
-<p>Resource not found</p>
-} else {
-<h1>@selectedResource.Name</h1>
-<p>@(selectedResource.Description)</p>
-<p>
-[<a href="/">Back</a>]
-[<a href="/Resources/@(selectedResource.Id.ToString())/Book/">Book this resource</a>]<br/>
-</p>
-<hr/>
-<WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(DateTime.Now)" />
-}
+<AuthorizeView>
+    <Authorized>
+        @if(selectedResource == null) {
+            <p>Resource not found</p>
+        } else {
+            <h1>@selectedResource.Name</h1>
+            <p>@(selectedResource.Description)</p>
+            <p>
+                [<a href="/">Back</a>]
+            </p>
+            <p>
+                Click a day to create a booking.
+            </p>
+            <hr/>
+            <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(DateTime.Now)" />
+        }
+    </Authorized>
+</AuthorizeView>

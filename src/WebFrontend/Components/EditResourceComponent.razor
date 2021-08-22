@@ -105,6 +105,11 @@
             <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.Name)" />
         </div>
         <div class="form-group row">
+            <label for="resourceDefaultBookingMinutes" class="col-sm-3">Default booking minutes: </label>
+            <InputNumber id="resourceDefaultBookingMinutes" class="form-control col-sm-8" @bind-Value="@Resource.DefaultBookingMinutes"></InputNumber>
+            <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.DefaultBookingMinutes)" />
+        </div>
+        <div class="form-group row">
             <label for="resourceDescription" class="col-sm-3">Description: </label>
             <InputTextArea  id="resourceDescription" class="form-control col-sm-8" @bind-Value="@Resource.Description"></InputTextArea>
             <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.Description)" />
@@ -122,7 +127,7 @@
         </div>
 
         <div class="form-group row">
-            <label for="resourceName" class="col-sm-3">OIDC Group IDs - Can view: </label>
+            <label for="oidcView" class="col-sm-3">OIDC Group IDs - Can view: </label>
         </div>
         <div class="form-group row">
         
@@ -137,13 +142,13 @@
                 <div class="offset-sm-1 col-sm-8"><i>Any user / no security restrictions</i></div>
             }
             
-            <InputText id="resourceName" class="form-control offset-sm-1  col-sm-10" @bind-Value="@newViewGroupString"></InputText>
+            <InputText id="oidcView" class="form-control offset-sm-1  col-sm-10" @bind-Value="@newViewGroupString"></InputText>
             <button type="button" @onclick="@(() => OnClick_AddViewGroup(newViewGroupString))" class="btn btn-link">Add</button>
 
         </div>
         
         <div class="form-group row">
-            <label for="resourceName" class="col-sm-3">OIDC Group IDs - Can edit/cancel: </label>
+            <label for="oidcEdit" class="col-sm-3">OIDC Group IDs - Can edit/cancel: </label>
         </div>
         <div class="form-group row">
             @if (Resource.OIDC_CanEditBookings.Count > 0) {
@@ -157,7 +162,7 @@
                 <div class="offset-sm-1 col-sm-8"><i>Any user / no security restrictions</i></div>
             }
             
-            <InputText id="resourceName" class="form-control offset-sm-1 col-sm-10" @bind-Value="@newEditGroupString"></InputText>
+            <InputText id="oidcEdit" class="form-control offset-sm-1 col-sm-10" @bind-Value="@newEditGroupString"></InputText>
             <button type="button" @onclick="@(() => OnClick_AddEditGroup(newEditGroupString))" class="btn btn-link">Add</button>
 
         </div>        
