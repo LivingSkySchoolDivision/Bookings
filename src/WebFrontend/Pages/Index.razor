@@ -18,7 +18,6 @@
     }
 
 }
-<h1>LSSD Resource Booking System</h1>
 
 <AuthorizeView>
     <Authorized>
@@ -49,7 +48,7 @@
         @foreach(Resource res in _allResources[group.Id].OrderBy(x => x.Name)) 
         {
             <div class="resource_item">
-                <div class="resource_name"><a href="/Resources/@(res.Id)">@res.Name</a></div>
+                <div class="resource_name"><a href="/Resources/@(res.Id)"><span class="oi oi-calendar"></span> @res.Name</a></div>
                 <div class="resource_description">@res.Description</div>
             </div>            
         }
@@ -59,9 +58,11 @@
 }    
 </div>
 
-<br/><hr>
+<br/>
         @if (context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
-            <a href="/Config">Config</a>
+            <div class="config_button">
+                <a href="/Config">Config</a>
+            </div>
         }
     </Authorized>
 </AuthorizeView>

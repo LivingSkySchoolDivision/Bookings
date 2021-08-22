@@ -59,18 +59,16 @@
 
 <AuthorizeView>
     <Authorized>
-
+<div class="booking_view_container">
 @if(booking == null) {
     <p>Booking not found</p>
 } else {
     if (resource == null) {
         <p>Resource not found</p>
     } else {
-        <h1>@booking.ShortDescription</h1>
         <p>
         [<a href="/Resources/@(resourceguid)/@(booking.BookingDate.Year)/@(booking.BookingDate.Month)">Back</a>]<br/>
         </p>
-        <hr/>
         <WebFrontend.Components.SingleBookingViewComponent Booking="@booking" BookableResource="@resource" />
         
         @* Check here if the current user has the requisite claims to cancel this event, and if so, show cancel buttons *@
@@ -94,13 +92,13 @@
         {
             @if(booking.IsCancelled) 
             {
-                <button type="button" @onclick="() => OnClick_UnCancelEvent(booking, context.User.Identity.Name)" class="btn btn-outline-warning">Un-Cancel this event</button>
+                <button type="button" @onclick="() => OnClick_UnCancelEvent(booking, context.User.Identity.Name)" class="btn btn-outline-danger">Un-Cancel this event</button>
             } else {
-                <button type="button" @onclick="() => OnClick_CancelEvent(booking, context.User.Identity.Name)" class="btn btn-outline-warning">Cancel this event</button>
+                <button type="button" @onclick="() => OnClick_CancelEvent(booking, context.User.Identity.Name)" class="btn btn-danger">Cancel this event</button>
             }
         }
     }
 }
-
+</div>
     </Authorized>
 </AuthorizeView>
