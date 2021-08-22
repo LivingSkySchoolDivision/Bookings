@@ -94,9 +94,9 @@
         {
             @if(booking.IsCancelled) 
             {
-                <button type="button" @onclick="() => OnClick_UnCancelEvent(booking, context.User.Identity.Name)" class="btn btn-outline-warning">Un-Cancel this event</button>
+                <button type="button" @onclick="() => OnClick_UnCancelEvent(booking, context.User.Identity.Name)" class="btn btn-outline-danger">Un-Cancel this event</button>
             } else {
-                <button type="button" @onclick="() => OnClick_CancelEvent(booking, context.User.Identity.Name)" class="btn btn-outline-warning">Cancel this event</button>
+                <button type="button" @onclick="() => OnClick_CancelEvent(booking, context.User.Identity.Name)" class="btn btn-danger">Cancel this event</button>
             }
         }
     }
