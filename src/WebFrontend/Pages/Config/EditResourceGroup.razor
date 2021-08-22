@@ -19,23 +19,23 @@
         @if (!context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
             <WebFrontend.Components.AccessDeniedComponent />
         } else {
-            
+            <div style="width: 700px;">
+                <h1>Edit Resource Group</h1>
+                <div>
 
-        <h1>Edit Resource Group</h1>
-        <div style="width: 80%; margin-left: auto; margin-right: auto;">
+                @if (!string.IsNullOrEmpty(resourceguid)) {
+                    ResourceGroup resourcegroup = _repo.Get(resourceguid);
+                    if (resourcegroup != null) {
+                        <WebFrontend.Components.EditResourceGroupComponent ResourceGroup="@resourcegroup" BackRoute="/Config/" />
+                    } else {
+                        <p>Resource not found.</p>
+                    }
+                } else {
+                    <p>Resource not found (empty).</p>
+                }
 
-        @if (!string.IsNullOrEmpty(resourceguid)) {
-            ResourceGroup resourcegroup = _repo.Get(resourceguid);
-            if (resourcegroup != null) {
-                <WebFrontend.Components.EditResourceGroupComponent ResourceGroup="@resourcegroup" BackRoute="/Config/" />
-            } else {
-                <p>Resource not found.</p>
-            }
-        } else {
-            <p>Resource not found (empty).</p>
-        }
-
-        </div>
+                </div>
+            </div>
         }
     </Authorized>
     <NotAuthorized>
