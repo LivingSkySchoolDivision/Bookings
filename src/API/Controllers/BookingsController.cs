@@ -22,34 +22,37 @@ namespace LSSD.Bookings.API.Controllers
             _service = service;
         }
 
-        [HttpGet("{id}/{year}/{month}/{day}")]
-        public IEnumerable<SingleBooking> Get(Guid id, int year, int month, int day)
+        [HttpGet("{resourceid}/{year}/{month}/{day}")]
+        public IEnumerable<SingleBooking> Get(Guid resourceid, int year, int month, int day)
         {
             return _service.Find(x => 
-                x.ResourceGUID == id &&
+                x.ResourceGUID == resourceid &&
                 x.BookingDate.Year == year &&
                 x.BookingDate.Month == month &&
-                x.BookingDate.Day == day
-            );
+                x.BookingDate.Day == day &&
+                x.IsCancelled == false
+            ).OrderBy(x => x.BookingDate).ThenBy(x => x.StartHourUTC).ThenBy(x => x.StartMinuteUTC);
         }
 
-        [HttpGet("{id}/{year}/{month}")]
-        public IEnumerable<SingleBooking> Get(Guid id, int year, int month)
+        [HttpGet("{resourceid}/{year}/{month}")]
+        public IEnumerable<SingleBooking> Get(Guid resourceid, int year, int month)
         {
             return _service.Find(x => 
-                x.ResourceGUID == id &&
+                x.ResourceGUID == resourceid &&
                 x.BookingDate.Year == year &&
-                x.BookingDate.Month == month
-            );
+                x.BookingDate.Month == month &&
+                x.IsCancelled == false
+            ).OrderBy(x => x.BookingDate).ThenBy(x => x.StartHourUTC).ThenBy(x => x.StartMinuteUTC);
         }
 
-        [HttpGet("{id}/{year}")]
-        public IEnumerable<SingleBooking> Get(Guid id, int year)
+        [HttpGet("{resourceid}/{year}")]
+        public IEnumerable<SingleBooking> Get(Guid resourceid, int year)
         {
             return _service.Find(x => 
-                x.ResourceGUID == id &&
-                x.BookingDate.Year == year
-            );
+                x.ResourceGUID == resourceid &&
+                x.BookingDate.Year == year &&
+                x.IsCancelled == false
+            ).OrderBy(x => x.BookingDate).ThenBy(x => x.StartHourUTC).ThenBy(x => x.StartMinuteUTC);
         }
     }
 }
