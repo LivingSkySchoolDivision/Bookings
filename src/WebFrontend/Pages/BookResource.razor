@@ -62,7 +62,8 @@
                     x.ResourceGUID == selectedResource.Id &&
                     x.BookingDate.Year == newBooking.BookingDate.Year && 
                     x.BookingDate.Month == newBooking.BookingDate.Month &&
-                    x.BookingDate.Day == newBooking.BookingDate.Day
+                    x.BookingDate.Day == newBooking.BookingDate.Day &&
+                    x.IsCancelled == false
                     ).ToList();
             
         }
@@ -119,10 +120,10 @@
         <p>
         [<a href="/Resources/@(selectedResource.Id.ToString())/@(year)/@(month)">Back</a>]<br/>
         </p>
-        <hr/>
 
-        <div class="daycalendar_day_container">
-            <div class="daycalendar_day_newbooking_form">
+        <div class="book_resource_page_container">
+
+            <div class="book_resource_form">
                 <h2>Create new booking</h2>
                 <EditForm Model="newBooking" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInValidSubmit">
                     <DataAnnotationsValidator />
@@ -148,7 +149,11 @@
                 </div>
 
             </div>
-            <div style="padding: 10px;">
+
+
+            
+
+            <div class="book_resource_calendar">
                 <h3>@(newBooking.BookingDate.ToString("dddd, MMMM dd, yyyy"))</h3>
                 <div class="daycalendar_day">
                 @for(int hour=6;hour<24;hour++) {
@@ -172,6 +177,8 @@
                 }
                 </div>
             </div>
+
+
         </div>
     </Authorized>
 </AuthorizeView>

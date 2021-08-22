@@ -21,72 +21,72 @@
     @if(Booking.IsCancelled) {
         
         <div class="form-row">
-            <div class="col-sm-12" style="color: red; font-weight: bold;">
+            <div class="col-md-12" style="color: red; font-weight: bold;">
                  BOOKING IS CANCELLED
             </div>
         </div>
     }
     
     <div class="form-row">
-        <div class="col-sm-3">
+        <div class="col-md-4">
             <label for="bookingShortDescription" class="font-weight-bold">Short Description: </label>
         </div>
-        <div class="col-sm-9">
+        <div class="col-md-8">
             @Booking.ShortDescription
         </div>
     </div>
 
     <div class="form-row">
-        <div class="col-sm-3">
+        <div class="col-md-4">
             <label for="resourceName" class="font-weight-bold">Resource: </label>
         </div>
-        <div class="col-sm-4">
+        <div class="col-md-8">
             @(BookableResource.Name)
         </div>
     </div>
 
     <div class="form-row">
-        <div class="col-sm-3">
+        <div class="col-md-4">
             <label for="bookingRequestor" class="font-weight-bold">Date: </label>
         </div>
-        <div class="col-sm-4">
+        <div class="col-md-8">
             @(Booking.BookingDate.ToLongDateString())
         </div>
     </div>
     
     <div class="form-row">
-        <div class="col-sm-3">
+        <div class="col-md-4">
             <label for="bookingRequestor" class="font-weight-bold">Start Time: </label>
         </div>
-        <div class="col-sm-4">
+        <div class="col-md-8">
             @(Booking.StartTimeUTC.ToShortTimeString())
         </div>
     </div>
 
     <div class="form-row">
-        <div class="col-sm-3">
+        <div class="col-md-4">
             <label for="bookingDuration" class="font-weight-bold">End Time: </label>
         </div>
-        <div class="col-sm-4">
+        <div class="col-md-8">
             @(Booking.EndTimeUTC.ToShortTimeString()) (@Booking.DurationMinutes minutes)
         </div>
     </div>
     
 
     <div class="form-row">
-        <div class="col-sm-3">
+        <div class="col-md-4">
             <label for="bookingDetails" class="font-weight-bold">Details (optional): </label>
         </div>
-        <div class="col-sm-9">
+        <div class="col-md-8">
             @Booking.Details
         </div>
     </div>
     
     <div class="form-row">
-        <div class="col-sm-3">
+        <div class="col-md-4">
             <label for="bookingRequestorActual" class="font-weight-bold">Booked by: </label>
         </div>
-        <div class="col-sm-4">
+        <div class="col-md-8">
             @(Booking.BookedByName)    
         </div>
     </div>
@@ -94,10 +94,10 @@
     @if (Booking.IsCancelled)
     {
         <div class="form-row">
-            <div class="col-sm-3">
+            <div class="col-md-4">
                 <label for="bookingShortDescription" class="font-weight-bold">Cancelled by: </label>
             </div>
-            <div class="col-sm-9">
+            <div class="col-md-8">
                 @Booking.CancelledBy
             </div>
         </div>

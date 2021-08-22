@@ -94,7 +94,13 @@
                     <div id="today"></div>
                 }
                 <div class="calendar_day_number">
-                    <a href="/Resources/@(resourceGuid)/Book/@(_startDate.Year)/@(_startDate.Month)/@(dayCounter)">@dayCounter</a>
+                    <a class="@(isToday ? "calendar_day_number_today" : "")" href="/Resources/@(resourceGuid)/Book/@(_startDate.Year)/@(_startDate.Month)/@(dayCounter)">@dayCounter</a>
+                </div>
+                <div class="calendar_day_name">
+                    @{
+                        DateTime thisDateActual = new DateTime(_startDate.Year, _startDate.Month, dayCounter);                        
+                    }
+                    @(@thisDateActual.DayOfWeek.ToString())
                 </div>
                 @if(bookingsThisMonth.ContainsKey(dayCounter)) {
                     @foreach(SingleBooking booking in bookingsThisMonth[dayCounter].OrderBy(x => x.StartTimeUTC.Hour).ThenBy(x => x.StartTimeUTC.Minute)) 

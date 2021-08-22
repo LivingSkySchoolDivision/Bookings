@@ -1,12 +1,12 @@
-.daycalendar_day_container {
-    display: grid;
-    grid-template-columns: 50% 50%;
+.book_resource_page_container {
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 
 .daycalendar_day {
     border: 1px solid #C0C0C0;
-    width: 500px;
+    width: 350px;
 }
 
 .daycalendar_hour_block {
@@ -35,13 +35,13 @@
 .daycalendar_event {
     font-size: 10pt;
     position: absolute;
-    left: 30px;
+    left: 0px;
     top: 0px;
     background-color: cornflowerblue;
     border-radius: 5px;
     padding: 5px;
     box-sizing: border-box;
-    width: 400px;
+    width: 290px;
     z-index: 999;
     overflow: auto;
     scrollbar-width: thin;
@@ -52,4 +52,49 @@
     background-color: rgba(255,255,255,0.5);
     box-sizing: border-box;
     border: 3px dashed green;
+}
+
+.book_resource_calendar {
+    padding: 10px;
+}
+
+@media only screen and (max-width: 850px) {
+    
+	.book_resource_form {
+        order: 2;
+        width: 100%;
+        padding-top: 25px;        
+    }
+
+    .book_resource_calendar {
+        order: 1;
+        width: 100%;
+        padding: 0;
+    }
+
+    .book_resource_page_container {
+        flex-wrap: wrap;
+    }
+
+    .daycalendar_day {
+        width: 100%;
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .daycalendar_event {
+        width: 75vw;
+    }
+
+    .calendar_day_number_today {
+        border-color: chocolate !important;
+        color: chocolate;
+        border-width: 2px !important;
+    }
+
+    .calendar_day_number_today:hover {
+        border-color: chocolate !important;
+        color: chocolate;
+    }
+
 }

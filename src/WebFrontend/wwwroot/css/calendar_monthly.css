@@ -1,84 +1,169 @@
 
-    .calendar_container {
-        width: 1050px;
-        box-sizing: border-box; 
-    }
+.calendar_container {
+    width: 1050px;
+    box-sizing: border-box; 
+}
 
+.calenday_month_day_name {
+    font-size: 10pt;
+    width: 150px;
+    text-align: center;
+    border-top: 1px solid #C0C0C0;
+    border-right: 1px solid #C0C0C0;
+    border-bottom: 1px solid #C0C0C0;
+    box-sizing: border-box;
+}
+
+.calendar_day {
+    width: 150px;
+    height: 150px;
+    border-bottom: 1px solid #C0C0C0;
+    border-right: 1px solid #C0C0C0;
+    box-sizing: border-box; 
+    position: relative;  
+    padding: 5px;  
+    overflow: auto;
+    scrollbar-width: thin;
+}
+
+.calendar_day_nomonth {
+    width: 150px;
+    height: 150px;
+    border-bottom: 1px solid #C0C0C0;
+    border-right: 1px solid #C0C0C0;
+    box-sizing: border-box; 
+    position: relative;  
+    padding: 5px;  
+    background-color: #F0F0F0;
+}
+
+.calendar_month {
+    border-left: 1px solid #C0C0C0;
+    width: 1050px;
+    display: grid; 
+    box-sizing: border-box;
+    grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;
+}
+
+#today {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 2px solid slateblue;
+    z-index: -99;
+}
+
+.calendar_heading {
+    position: relative;        
+    border-bottom: 1px solid #C0C0C0;
+}
+
+.calendar_nav_buttons {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.calendar_item_preview {
+    font-size: 8pt;
+    background-color: gainsboro;
+    border-radius: 4px;
+    padding: 2px;
+    color: black;
+    margin-bottom: 2px;
+}
+
+.calendar_item_preview_time {
+}
+
+.calendar_item_preview_description { 
+    padding-left: 4px;
+}
+
+
+.calendar_day_name {
+    display: none;
+}
+    
+@media only screen and (max-width: 850px) {
     .calenday_month_day_name {
-        font-size: 10pt;
-        width: 150px;
-        text-align: center;
-        border-top: 1px solid #C0C0C0;
-        border-right: 1px solid #C0C0C0;
-        border-bottom: 1px solid #C0C0C0;
-        box-sizing: border-box;
+        display: none;
     }
 
     .calendar_day {
-        width: 150px;
-        height: 150px;
-        border-bottom: 1px solid #C0C0C0;
-        border-right: 1px solid #C0C0C0;
-        box-sizing: border-box; 
-        position: relative;  
-        padding: 5px;  
-        overflow: auto;
-        scrollbar-width: thin;
-    }
-
-    .calendar_day_nomonth {
-        width: 150px;
-        height: 150px;
-        border-bottom: 1px solid #C0C0C0;
-        border-right: 1px solid #C0C0C0;
-        box-sizing: border-box; 
-        position: relative;  
-        padding: 5px;  
-        background-color: #F0F0F0;
+        height: auto;
+        width: 100%;
+        border-left: 0;
+        border-right: 0;
+        border-top: 0;
+        border-bottom: 1px dotted rgba(0,0,0,0.5);
+        padding: 10px;
     }
 
     .calendar_month {
-        border-left: 1px solid #C0C0C0;
-        width: 1050px;
-        display: grid; 
-        box-sizing: border-box;
-        grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;
+        display: flex;
+        flex-wrap: wrap; 
+        border: 0;     
+        width: 100%;  
     }
 
-    #today {
-        position: absolute;
-        top: 0;
-        left: 0;
+    .calendar_day_nomonth { 
+        display: none;
+    }
+
+    .calendar_day_number {
+        font-size: 125%;
+        font-weight: bold;
+        display: block;
         width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-        border: 2px solid slateblue;
-        z-index: -99;
     }
 
-    .calendar_heading {
-        position: relative;        
-        border-bottom: 1px solid #C0C0C0;
-    }
-
-    .calendar_nav_buttons {
-        position: absolute;
-        right: 0;
-        bottom: 0;
+    .calendar_day_number a {
+        padding: 15px;
+        border: 1px solid cornflowerblue;
+        width: 100px;
+        display: inline-block;
+        text-align: center;
+        border-radius: 5px;
     }
 
     .calendar_item_preview {
-        font-size: 8pt;
-        background-color: gainsboro;
-        border-radius: 4px;
-        padding: 2px;
-        color: black;
-        margin-bottom: 2px;
+        margin-left: 15px;
+        border-radius: 0;
+        padding:15px;
+        font-size: 110%;
+        background: none;
     }
 
     .calendar_item_preview_time {
+        display: inline;
+        font-weight: bold;
     }
 
-    .calendar_item_preview_description { 
-        padding-left: 4px;
+    .calendar_item_preview_description {
+        display: inline;
     }
+
+    .calendar_heading {
+        border: 0;
+    }
+
+    .calendar_container {
+        width: 100%;
+    }
+
+    #today {
+        display: none;
+    }
+    
+    .calendar_day_name {
+        display: block;
+        width: 100px;
+        text-align: center;
+        color: rgba(0,0,0,0.5);
+        font-size: 75%;;
+    }
+}
