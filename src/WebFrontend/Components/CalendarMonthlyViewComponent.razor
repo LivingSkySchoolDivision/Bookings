@@ -2,7 +2,7 @@
 
 @code {
     [Inject]
-    BookingService _bookingService { get; set; }
+    BookingService _bookingService { get; set; }    
 
     [Parameter]
     public Guid resourceGuid { get; set; }
@@ -85,7 +85,8 @@
     @while(dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month))
     {
         for(int x = 0; x < 7; x++) {
-            bool isToday = ((DateTime.Now.Year == _startDate.Year) && (DateTime.Now.Month == _startDate.Month) && (DateTime.Now.Day == dayCounter));
+            
+            bool isToday = ((Today.Year == _startDate.Year) && (Today.Month == _startDate.Month) && (Today.Day == dayCounter));
             
             @if ((dayCounter > 0) && (dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month))) 
             {            

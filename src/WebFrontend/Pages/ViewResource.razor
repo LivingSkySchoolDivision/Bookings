@@ -3,11 +3,16 @@
 @page "/Resources/{resourceguid}/{year:int}/{month:int}"
 @page "/Resources/{resourceguid}/{year:int}/{month:int}/{day:int}"
 @using LSSD.Bookings
+@using Microsoft.Extensions.Configuration
 
 @code {
 
     [Inject]
     ResourceService _resourceService { get; set; }
+
+    [Inject]
+    IConfiguration _configuration { get; set; }
+    
 
     [Parameter]
     public string resourceguid { get; set; }
@@ -24,6 +29,8 @@
 
     Resource selectedResource = null;   
 
+    DateTime today_date = DateTime.Now;
+
     protected override void OnInitialized()
     {
         if (year == 0) {
@@ -37,7 +44,12 @@
         if (resourceguid != null) 
         {
             selectedResource = _resourceService.Get(resourceguid);
-        }            
+        }   
+
+        if(!string.IsNullOrEmpty(_configuration["Settings:TimeZone"])) {
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(_configuration["Settings:TimeZone"]);
+            today_date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), timeZone);
+        }         
     } 
 }
 
@@ -54,7 +66,8 @@
             <p>
                 Click a day to create a booking.
             </p>
-            <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(DateTime.Now)" />
+            
+            <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(today_date)" />
         }
     </Authorized>
 </AuthorizeView>
