@@ -27,5 +27,11 @@ namespace LSSD.Bookings.API.Controllers
         {
             return _resourceService.GetEnabled();
         }
+
+        [HttpGet("{resourceid}")]
+        public Resource Get(Guid resourceid)
+        {
+            return _resourceService.Get(resourceid);
+        }
     }
 }

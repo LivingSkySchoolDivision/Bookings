@@ -23,5 +23,10 @@ namespace LSSD.Bookings.API.Services
             return _repository.GetAll().Where(x => x.IsEnabled == true);
         }
 
+        public Resource Get(Guid GUID)
+        {
+            return _repository.GetById(GUID);
+        }
+
     }
 }
