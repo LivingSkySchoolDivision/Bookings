@@ -110,6 +110,11 @@
             <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.DefaultBookingMinutes)" />
         </div>
         <div class="form-group row">
+            <label for="resourceBookingWindowDays" class="col-sm-3">Days in future to allow bookings: </label>
+            <InputNumber id="resourceBookingWindowDays" class="form-control col-sm-8" @bind-Value="@Resource.BookingWindowDays"></InputNumber>
+            <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.BookingWindowDays)" />
+        </div>
+        <div class="form-group row">
             <label for="resourceDescription" class="col-sm-3">Description: </label>
             <InputTextArea  id="resourceDescription" class="form-control col-sm-8" @bind-Value="@Resource.Description"></InputTextArea>
             <ValidationMessage class="offset-sm-3 col-sm-68" For="@(() => Resource.Description)" />

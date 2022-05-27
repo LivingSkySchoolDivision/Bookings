@@ -86,7 +86,7 @@
                     Click a day to create a booking.
                 </p>
 
-                <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(today_date)" />
+                <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(today_date)" BookingWindowDays="@(selectedResource.BookingWindowDays)" />
             } else {
                 <a href="/">Back</a><br/>
                 <i>Sorry, you don't appear to be able to access this resource. Sorry.</i>

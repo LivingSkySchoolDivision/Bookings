@@ -13,5 +13,6 @@ namespace LSSD.Bookings
         public List<string> OIDC_CanViewResource { get; set; } = new List<string>();
         public List<string> OIDC_CanEditBookings { get; set; } = new List<string>();
         public int DefaultBookingMinutes { get; set; }
+        public int BookingWindowDays { get; set; } = 9999;
     }
 }
