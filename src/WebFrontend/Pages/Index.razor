@@ -23,7 +23,7 @@
     <Authorized>
         
 @{
-    List<Resource> thisUserResources = _repository.GetForClaims(context.User.Claims.Where(x => x.Type == "groups").Select(x => x.Value).ToList()).ToList();
+    List<Resource> thisUserResources = _repository.GetForClaims(context.User.Claims.Where(x => x.Type == "groups").Select(x => x.Value).ToList(), Configuration["OIDC:AdminGroupID"]).ToList();
     Dictionary<Guid, List<Resource>> _allResources = new Dictionary<Guid, List<Resource>>();
 
 

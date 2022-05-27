@@ -12,23 +12,23 @@
     ResourceService _resourceService { get; set; }
 
     [Inject]
-    IConfiguration _configuration { get; set; }
-    
+    IConfiguration _configuration { get; set; }    
+
 
     [Parameter]
     public string resourceguid { get; set; }
 
     [Parameter]
     public int year { get; set; } = DateTime.Today.Year;
-    
+
     [Parameter]
     public int month { get; set; } = DateTime.Today.Month;
-    
+
     [Parameter]
     public int day { get; set; } = DateTime.Today.Day;
-    
 
-    Resource selectedResource = null;   
+
+    Resource selectedResource = null;
 
     DateTime today_date = DateTime.Now;
 
@@ -42,32 +42,40 @@
             month = DateTime.Now.Month;
         }
 
-        if (resourceguid != null) 
+        if (resourceguid != null)
         {
             selectedResource = _resourceService.Get(resourceguid);
-        }   
+        }
 
         if(!string.IsNullOrEmpty(_configuration["Settings:TimeZone"])) {
             TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(_configuration["Settings:TimeZone"]);
             today_date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), timeZone);
-        }         
-    } 
+        }
+    }
 }
 
 <AuthorizeView>
-    <Authorized Context="Auth"> 
+    <Authorized Context="Auth">
         @if(selectedResource == null) {
             <p>Resource not found</p>
         } else {
             bool userCanAccessThisResource = false;
-            foreach(Claim claim in Auth.User.Claims.Where(x => x.Type == "groups")) 
-            { 
+            foreach(Claim claim in Auth.User.Claims.Where(x => x.Type == "groups"))
+            {
                 if (selectedResource.OIDC_CanEditBookings.Contains(claim.Value) || selectedResource.OIDC_CanViewResource.Contains(claim.Value))
                 {
                     userCanAccessThisResource = true;
                 }
+
+                if (!string.IsNullOrEmpty(_configuration["OIDC:AdminGroupID"]))
+                {
+                    if (_configuration["OIDC:AdminGroupID"] == claim.Value)
+                    {
+                        userCanAccessThisResource = true;
+                    }
+                }
             }
-            
+
             @if(userCanAccessThisResource) {
                 <h1>@selectedResource.Name</h1>
                 <p>@(selectedResource.Description)</p>
@@ -77,7 +85,7 @@
                 <p>
                     Click a day to create a booking.
                 </p>
-                
+
                 <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(today_date)" />
             } else {
                 <a href="/">Back</a><br/>

@@ -39,7 +39,7 @@ namespace WebFrontend
             return _repository.GetById(id);
         }
 
-        public IEnumerable<Resource> GetForClaims(IEnumerable<string> Claims)
+        public IEnumerable<Resource> GetForClaims(IEnumerable<string> Claims, string AdminGroupID)
         {
             IList<Resource> allResources = _repository.GetAll();
             IList<Resource> returnMe = new List<Resource>();
@@ -63,6 +63,19 @@ namespace WebFrontend
                             returnMe.Add(r);
                         }
                     }
+
+                    if (!string.IsNullOrEmpty(AdminGroupID))
+                    {
+                        if (AdminGroupID.Contains(claim)) 
+                        {
+                            if (!returnMe.Contains(r)) 
+                            {
+                                returnMe.Add(r);
+                            }
+                        }
+                    }
+
+                    
                 }
             }
 
