@@ -4,6 +4,7 @@
 @page "/Resources/{resourceguid}/{year:int}/{month:int}/{day:int}"
 @using LSSD.Bookings
 @using Microsoft.Extensions.Configuration
+@using System.Security.Claims
 
 @code {
 
@@ -54,20 +55,34 @@
 }
 
 <AuthorizeView>
-    <Authorized>
+    <Authorized Context="Auth"> 
         @if(selectedResource == null) {
             <p>Resource not found</p>
         } else {
-            <h1>@selectedResource.Name</h1>
-            <p>@(selectedResource.Description)</p>
-            <p>
-                [<a href="/">Back</a>]
-            </p>
-            <p>
-                Click a day to create a booking.
-            </p>
+            bool userCanAccessThisResource = false;
+            foreach(Claim claim in Auth.User.Claims.Where(x => x.Type == "groups")) 
+            { 
+                if (selectedResource.OIDC_CanEditBookings.Contains(claim.Value) || selectedResource.OIDC_CanViewResource.Contains(claim.Value))
+                {
+                    userCanAccessThisResource = true;
+                }
+            }
             
-            <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(today_date)" />
+            @if(userCanAccessThisResource) {
+                <h1>@selectedResource.Name</h1>
+                <p>@(selectedResource.Description)</p>
+                <p>
+                    [<a href="/">Back</a>]
+                </p>
+                <p>
+                    Click a day to create a booking.
+                </p>
+                
+                <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(today_date)" />
+            } else {
+                <a href="/">Back</a><br/>
+                <i>Sorry, you don't appear to be able to access this resource. Sorry.</i>
+            }
         }
     </Authorized>
 </AuthorizeView>

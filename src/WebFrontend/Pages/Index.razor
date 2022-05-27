@@ -22,12 +22,12 @@
 <AuthorizeView>
     <Authorized>
         
-<div class="resource_group_container">
 @{
-    List<Resource> thisUserResources = _repository.GetForClaims(context.User.Claims.Select(x => x.Value).ToList()).ToList();
+    List<Resource> thisUserResources = _repository.GetForClaims(context.User.Claims.Where(x => x.Type == "groups").Select(x => x.Value).ToList()).ToList();
     Dictionary<Guid, List<Resource>> _allResources = new Dictionary<Guid, List<Resource>>();
 
-    foreach(Resource resource in _repository.GetEnabled())
+
+    foreach(Resource resource in thisUserResources)
     {
         if (!_allResources.ContainsKey(resource.GroupGUID))
         {
@@ -38,31 +38,35 @@
     }
 }
 
-@foreach(ResourceGroup group in _groupRepository.GetAll().OrderBy(x => x.Name))
-{    
-    @if (_allResources.ContainsKey(group.Id)) 
-    {
-        <div class="resource_group">
-        <h4>@group.Name</h4>
-
-        @foreach(Resource res in _allResources[group.Id].OrderBy(x => x.Name)) 
+@if (thisUserResources.Count > 0) {
+    <div class="resource_group_container">
+    @foreach(ResourceGroup group in _groupRepository.GetAll().OrderBy(x => x.Name))
+    {    
+        @if (_allResources.ContainsKey(group.Id)) 
         {
-            <div class="resource_item">
-                <div class="resource_name"><a href="/Resources/@(res.Id)"><span class="oi oi-calendar"></span> @res.Name</a></div>
-                <div class="resource_description">@res.Description</div>
-            </div>            
-        }
+            <div class="resource_group">
+            <h4>@group.Name</h4>
 
-        </div>
-    }
-}    
-</div>
+            @foreach(Resource res in _allResources[group.Id].OrderBy(x => x.Name)) 
+            {
+                <div class="resource_item">
+                    <div class="resource_name"><a href="/Resources/@(res.Id)"><span class="oi oi-calendar"></span> @res.Name</a></div>
+                    <div class="resource_description">@res.Description</div>
+                </div>            
+            }
 
-<br/>
-        @if (context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
-            <div class="config_button">
-                <a href="/Config">Config</a>
             </div>
         }
+    }    
+    </div>
+} else {
+    <i>You don't appear to have access to any bookable resources. Sorry.</i>
+}
+<br/>
+@if (context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
+    <div class="config_button">
+        <a href="/Config">Config</a>
+    </div>
+}
     </Authorized>
 </AuthorizeView>

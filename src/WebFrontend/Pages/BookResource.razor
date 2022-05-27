@@ -104,6 +104,7 @@
         @{
             newBooking.BookedByName = Auth.User.Identity.Name;
             string objectId = "";
+            bool userCanAccessThisResource = false;
             foreach(Claim claim in Auth.User.Claims) 
             {
                 foreach(KeyValuePair<string, string> property in claim.Properties) 
@@ -113,13 +114,24 @@
                         objectId = claim.Value;
                     }
                 }   
+                if (claim.Type == "groups") 
+                {
+                    if (selectedResource.OIDC_CanEditBookings.Contains(claim.Value) || selectedResource.OIDC_CanViewResource.Contains(claim.Value))
+                    {
+                        userCanAccessThisResource = true;
+                    }
+                }
             }
             newBooking.BookedByObjectId = objectId;
+
+            
         }
-        <h1>@selectedResource.Name</h1>
+        <h1>@selectedResource.Name</h1>        
         <p>
         [<a href="/Resources/@(selectedResource.Id.ToString())/@(year)/@(month)">Back</a>]<br/>
         </p>
+
+        @if (userCanAccessThisResource) {
 
         <div class="book_resource_page_container">
 
@@ -180,6 +192,9 @@
 
 
         </div>
+        } else {
+            <i>Sorry, you do not have access to this resource</i>
+        }
     </Authorized>
 </AuthorizeView>
 }

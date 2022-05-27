@@ -29,7 +29,7 @@ namespace WebFrontend
             return _repository.GetAll().Where(x => x.IsEnabled == true);
         }
 
-        public void Update(Resource obj) 
+        public void Update(Resource obj)
         {
             _repository.Update(obj);
         }
@@ -39,17 +39,46 @@ namespace WebFrontend
             return _repository.GetById(id);
         }
 
-        public IEnumerable<Resource> GetForClaims(IEnumerable<string> Claims) {
+        public IEnumerable<Resource> GetForClaims(IEnumerable<string> Claims)
+        {
+            IList<Resource> allResources = _repository.GetAll();
+            IList<Resource> returnMe = new List<Resource>();
 
-            return _repository.Find(x => 
+            foreach(Resource r in allResources)
+            {
+                foreach(string claim in Claims)
+                {
+                    if (r.OIDC_CanEditBookings.Contains(claim)) 
+                    {
+                        if (!returnMe.Contains(r)) 
+                        {
+                            returnMe.Add(r);
+                        }
+                    }
+
+                    if (r.OIDC_CanViewResource.Contains(claim)) 
+                    {
+                        if (!returnMe.Contains(r)) 
+                        {
+                            returnMe.Add(r);
+                        }
+                    }
+                }
+            }
+
+            return returnMe;
+
+            // This doesn't work as expected
+            /*
+            return _repository.Find(x =>
                 x.OIDC_CanEditBookings.Intersect(Claims).Any() ||
                 x.OIDC_CanViewResource.Intersect(Claims).Any() ||
                 x.OIDC_CanEditBookings.Count == 0 ||
                 x.OIDC_CanViewResource.Count == 0
             ).ToList();
-
+            */
         }
-        
+
 
     }
 }
