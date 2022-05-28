@@ -7,7 +7,7 @@
         @code {
             [Inject]
             ResourceService _resourceService { get; set; }
-            
+
             [Inject]
             ResourceGroupService _resourceGroupService { get; set; }
 
@@ -23,22 +23,20 @@
 
             <div class="section">
             <h1>Configure Resource Groups</h1>
-            <a href="/Config/ResourceGroups/New">New Resource Group</a>
+            <a class="btn btn-outline-primary" href="/Config/ResourceGroups/New">New Resource Group</a><br/><br/>
 
             <table class="table">
                 <thead>
-                    <th>ID</th>
                     <th>Name</th>
                     <th>Description</th>
-                </thead>    
+                </thead>
                 <tbody>
-                @foreach(ResourceGroup resource in _resourceGroupService.GetAll()) 
+                @foreach(ResourceGroup resourceGroup in _resourceGroupService.GetAll())
                 {
                     <tr>
-                        <td><a href="/Config/ResourceGroups/@(resource.Id.ToString())">@(resource.Id.ToString())</a></td>
-                        <td>@resource.Name</td>
-                        <td>@resource.Description</td>
-                    </tr>    
+                        <td><a href="/Config/ResourceGroups/@(resourceGroup.Id.ToString())">@resourceGroup.Name</a></td>
+                        <td>@resourceGroup.Description</td>
+                    </tr>
                 }
                 </tbody>
             </table>
@@ -47,28 +45,63 @@
         <br/><br/>
         <div class="section">
             <h1>Configure Resources</h1>
-            <a href="/Config/Resources/New">New Resource</a>
+            <a class="btn btn-outline-primary" href="/Config/Resources/New">New Resource</a><br/><br/>
 
             <table class="table">
                 <thead>
-                    <th>ID</th>
+                    <th>Group</th>
                     <th>Name</th>
                     <th>Description</th>
-                </thead>    
+                </thead>
                 <tbody>
-                @foreach(Resource resource in _resourceService.GetAll()) 
-                {
-                    <tr>
-                        <td><a href="/Config/Resources/@(resource.Id.ToString())">@(resource.Id.ToString())</a></td>
-                        <td>@resource.Name
-                            @if(!resource.IsEnabled) 
+                @{
+                    Dictionary<string, List<Resource>> resourcesByGroup = new Dictionary<string, List<Resource>>();
+                    foreach(Resource resource in _resourceService.GetAll())
+                    {
+                        bool foundGroup = false;
+                        foreach(ResourceGroup group in _resourceGroupService.GetAll())
+                        {
+                            if (resource.GroupGUID == group.Id)
                             {
-                                <i> (DISABLED)</i>
+                                if (!resourcesByGroup.ContainsKey(group.Name))
+                                {
+                                    resourcesByGroup.Add(group.Name, new List<Resource>());
+                                }
+                                resourcesByGroup[group.Name].Add(resource);
+                                foundGroup = true;
                             }
-                        </td>
-                        <td>@resource.Description</td>
-                    </tr>    
+                        }
+
+                        if (!foundGroup)
+                        {
+                            if (!resourcesByGroup.ContainsKey("No Group")) {
+                                resourcesByGroup.Add("No Group", new List<Resource>());
+                            }
+                            resourcesByGroup["No Group"].Add(resource);
+                        }
+
+                    }
                 }
+
+                @foreach(string groupName in resourcesByGroup.Keys.OrderBy(x => x))
+                {
+                    @foreach(Resource resource in resourcesByGroup[groupName].OrderBy(x => x.Name))
+                    {
+                        <tr>
+                            <td>@groupName</td>
+                            <td><a href="/Config/Resources/@(resource.Id.ToString())">@resource.Name</a>
+                                @if(!resource.IsEnabled)
+                                {
+                                    <i> (DISABLED)</i>
+                                }
+                            </td>
+                            <td>@resource.Description</td>
+                        </tr>
+                    }
+
+                }
+
+
                 </tbody>
             </table>
         </div>
