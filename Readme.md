@@ -22,4 +22,3 @@ This web application is designed to run with OAuth / OpenID Connect as an authen
 | `OIDC:ClientID` | The ClientID for the OpenID Connect connection. If using AzureAD, this is the __Application ID__ of your _Enterprise Application_ you've set up for the OIDC connection. | `00000000-0000-0000-0000-000000000000` |
 | `OIDC:ClientSecret` | A valid client secret from your OIDC server. | _A random string_ |
 | `Settings:TimeZone` | The name of the time zone to display dates and times in. Must be appropriate for the operating system hosting the application.| `America/Regina` or `Canada Central Standard Time` |
-
