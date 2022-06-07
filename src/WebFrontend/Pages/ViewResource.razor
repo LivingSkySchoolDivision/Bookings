@@ -129,9 +129,16 @@
                     <div style="text-align: right;">
                     @if(selectedResource.IsEnabled) 
                     {
+                         
                         <button type="button" @onclick="() => OnClick_DisableCalendar(selectedResource)" class="btn btn-outline-danger">Disable this calendar</button>
                     } else {
-                        <button type="button" @onclick="() => OnClick_EnableCalendar(selectedResource)" class="btn btn-outline-danger">Enable this calendar</button>
+                        <div class="card bg-danger text-white mb-3" style="text-align: left; width: 1050px;">
+                            <div class="card-body">
+                                <h5 class="card-title">Resource is disabled</h5>
+                                <p class="card-text">This resource is not currently enabled for booking. New bookings cannot be created until this resources is enabled again. You may still view or cancel existing bookings.</p>
+                            </div>
+                        </div>
+                        <button type="button" @onclick="() => OnClick_EnableCalendar(selectedResource)" class="btn btn-success">Enable this calendar</button>
                     }
                     </div>
                 }
