@@ -14,6 +14,8 @@
     [Inject]
     IConfiguration _configuration { get; set; }    
 
+    [Inject]
+    IConfiguration Configuration { get; set; }
 
     [Parameter]
     public string resourceguid { get; set; }
@@ -50,6 +52,25 @@
         if(!string.IsNullOrEmpty(_configuration["Settings:TimeZone"])) {
             TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(_configuration["Settings:TimeZone"]);
             today_date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), timeZone);
+        }
+    }
+
+    
+    protected void OnClick_DisableCalendar(Resource resource)
+    {     
+        if (resource.IsEnabled) 
+        {
+            resource.IsEnabled = false; 
+            _resourceService.Update(resource);
+        }
+    }
+    
+    protected void OnClick_EnableCalendar(Resource resource)
+    {     
+        if (!resource.IsEnabled) 
+        {
+            resource.IsEnabled = true;
+            _resourceService.Update(resource);
         }
     }
 }
@@ -91,11 +112,29 @@
                             <h5 class="card-title">Resource is disabled</h5>
                             <p class="card-text">This resource is not currently enabled for booking. New bookings cannot be created until this resources is enabled again. You may still view or cancel existing bookings.</p>
                         </div>
-                    </div>
+                    </div>                    
                 }
                 
 
                 <WebFrontend.Components.CalendarMonthlyViewComponent resource="@selectedResource" Year="@year" Month="@month" Today="@(today_date)" BookingWindowDays="@(selectedResource.BookingWindowDays)" />
+                <br/><br/>
+                
+
+                IEnumerable<string> userclaims = Auth.User.Claims.Select(x => x.Value);
+                @if (
+                    selectedResource.OIDC_CanEditBookings.Intersect(userclaims).Any() ||
+                    userclaims.Contains(Configuration["OIDC:AdminGroupID"])
+                )
+                {
+                    <div style="text-align: right;">
+                    @if(selectedResource.IsEnabled) 
+                    {
+                        <button type="button" @onclick="() => OnClick_DisableCalendar(selectedResource)" class="btn btn-outline-danger">Disable this calendar</button>
+                    } else {
+                        <button type="button" @onclick="() => OnClick_EnableCalendar(selectedResource)" class="btn btn-outline-danger">Enable this calendar</button>
+                    }
+                    </div>
+                }
             } else {
                 <a href="/">Back</a><br/>
                 <i>Sorry, you don't appear to be able to access this resource. Sorry.</i>
