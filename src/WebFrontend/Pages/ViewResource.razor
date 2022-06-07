@@ -82,11 +82,20 @@
                 <p>
                     [<a href="/">Back</a>]
                 </p>
-                <p>
-                    Click a day to create a booking.
-                </p>
+                @if(selectedResource.IsEnabled) 
+                {
+                    <p>Click a day to create a booking.</p>
+                } else {
+                    <div class="card bg-danger text-white mb-3" style="width: 1050px;">
+                        <div class="card-body">
+                            <h5 class="card-title">Resource is disabled</h5>
+                            <p class="card-text">This resource is not currently enabled for booking. New bookings cannot be created until this resources is enabled again. You may still view or cancel existing bookings.</p>
+                        </div>
+                    </div>
+                }
+                
 
-                <WebFrontend.Components.CalendarMonthlyViewComponent resourceGuid="@selectedResource.Id" Year="@year" Month="@month" Today="@(today_date)" />
+                <WebFrontend.Components.CalendarMonthlyViewComponent resource="@selectedResource" Year="@year" Month="@month" Today="@(today_date)" BookingWindowDays="@(selectedResource.BookingWindowDays)" />
             } else {
                 <a href="/">Back</a><br/>
                 <i>Sorry, you don't appear to be able to access this resource. Sorry.</i>

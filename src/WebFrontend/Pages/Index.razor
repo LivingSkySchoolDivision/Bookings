@@ -47,11 +47,19 @@
             <div class="resource_group">
             <h4>@group.Name</h4>
 
-            @foreach(Resource res in _allResources[group.Id].OrderBy(x => x.Name)) 
+            @foreach(Resource res in _allResources[group.Id].OrderByDescending(x => x.IsEnabled).ThenBy(x => x.Name)) 
             {
                 <div class="resource_item">
-                    <div class="resource_name"><a href="/Resources/@(res.Id)"><span class="oi oi-calendar"></span> @res.Name</a></div>
+                    
+                    @if(res.IsEnabled) {
+                        <div class="resource_name"><a href="/Resources/@(res.Id)"><span class="oi oi-calendar"></span> @res.Name</a></div>
+                    } else {
+                        <div class="resource_name"><i><span class="oi oi-ban"></span> @res.Name (Disabled)</i></div>
+                        <div class="resource_description"><a href="/Resources/@(res.Id)">View disabled calendar</a></div>
+                    }                    
+                    
                     <div class="resource_description">@res.Description</div>
+                    
                 </div>            
             }
 

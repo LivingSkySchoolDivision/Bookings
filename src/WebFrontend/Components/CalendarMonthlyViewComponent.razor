@@ -2,10 +2,10 @@
 
 @code {
     [Inject]
-    BookingService _bookingService { get; set; }    
+    BookingService _bookingService { get; set; }
 
     [Parameter]
-    public Guid resourceGuid { get; set; }
+    public Resource resource { get; set; }
 
     [Parameter]
     public int Year { get; set; }
@@ -16,17 +16,20 @@
     [Parameter]
     public DateTime Today { get; set; }
 
-      
+    [Parameter]
+    public int BookingWindowDays { get; set; }
+
+
     DateTime _startDate;
 
     Dictionary<int, List<SingleBooking>> bookingsThisMonth = new Dictionary<int, List<SingleBooking>>();
 
     protected override void OnInitialized()
     {
-        _startDate = new DateTime(Year, Month, 1); 
+        _startDate = new DateTime(Year, Month, 1);
 
-        ReloadBookings();        
-    } 
+        ReloadBookings();
+    }
 
     protected void OnClick_PrevMonth() {
         _startDate = _startDate.AddMonths(-1);
@@ -43,7 +46,7 @@
 
         // Load bookings for given month
         List<SingleBooking> raw_bookingsthismonth = _bookingService.Find(x =>
-            x.ResourceGUID == resourceGuid &&
+            x.ResourceGUID == resource.Id &&
             x.BookingDate.Year == _startDate.Year &&
             x.BookingDate.Month == _startDate.Month &&
             x.IsCancelled == false
@@ -62,6 +65,7 @@
 
 @{
     int dayCounter = ((int)_startDate.DayOfWeek * -1) + 1;
+    DateTime bookingWindowCutoffDate = BookingWindowDays > 0 ? Today.AddDays(BookingWindowDays) : DateTime.MaxValue;    
 }
 
 <div class="calendar_container">
@@ -84,40 +88,43 @@
 
     @while(dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month))
     {
-        for(int x = 0; x < 7; x++) {
-            
-            bool isToday = ((Today.Year == _startDate.Year) && (Today.Month == _startDate.Month) && (Today.Day == dayCounter));
-            
-            @if ((dayCounter > 0) && (dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month))) 
-            {            
+        for(int x = 0; x < 7; x++) 
+        {
+            @if ((dayCounter > 0) && (dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month)))
+            {          
+                bool isToday = ((Today.Year == _startDate.Year) && (Today.Month == _startDate.Month) && (Today.Day == dayCounter));                          
+                DateTime thisDay = new DateTime(_startDate.Year, _startDate.Month, dayCounter);
+                bool isWithinBookingWindow = (thisDay >= Today.Date) && (thisDay <= bookingWindowCutoffDate);
+
                 <div class="calendar_day">
                 @if(isToday) {
                     <div id="today"></div>
                 }
                 <div class="calendar_day_number">
-                    <a class="@(isToday ? "calendar_day_number_today" : "")" href="/Resources/@(resourceGuid)/Book/@(_startDate.Year)/@(_startDate.Month)/@(dayCounter)">@dayCounter</a>
+                    @if (isWithinBookingWindow && resource.IsEnabled) {
+                        <a class="@(isToday ? "calendar_day_number_today" : "")" href="/Resources/@(resource.Id)/Book/@(_startDate.Year)/@(_startDate.Month)/@(dayCounter)">@dayCounter</a>
+                    } else {
+                        <span class="dim">@dayCounter</span>
+                    }
                 </div>
                 <div class="calendar_day_name">
-                    @{
-                        DateTime thisDateActual = new DateTime(_startDate.Year, _startDate.Month, dayCounter);                        
-                    }
-                    @(@thisDateActual.DayOfWeek.ToString())
+                    @(@thisDay.DayOfWeek.ToString())
                 </div>
                 @if(bookingsThisMonth.ContainsKey(dayCounter)) {
-                    @foreach(SingleBooking booking in bookingsThisMonth[dayCounter].OrderBy(x => x.StartTimeUTC.Hour).ThenBy(x => x.StartTimeUTC.Minute)) 
+                    @foreach(SingleBooking booking in bookingsThisMonth[dayCounter].OrderBy(x => x.StartTimeUTC.Hour).ThenBy(x => x.StartTimeUTC.Minute))
                     {
                         <div class="calendar_item_preview">
                                 <div class="calendar_item_preview_time">@(booking.StartTimeUTC.ToString("HH:mm"))-@(booking.EndTimeUTC.ToString("HH:mm"))</div>
                                 <div class="calendar_item_preview_description">
-                                    <a href="/Resources/@(resourceGuid)/Booking/@(booking.Id)">@(booking.ShortDescription)</a>
+                                    <a href="/Resources/@(resource.Id)/Booking/@(booking.Id)">@(booking.ShortDescription)</a>
                                 </div>
-                            
+
                         </div>
                     }
                 }
-                </div>            
+                </div>
             } else {
-                <div class="calendar_day_nomonth">            
+                <div class="calendar_day_nomonth">
                 </div>
             }
             dayCounter++;
