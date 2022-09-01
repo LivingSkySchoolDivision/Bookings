@@ -13,7 +13,7 @@
     BookingService _bookingService { get; set; }
 
     [Inject]
-    IConfiguration _configuration { get; set; }    
+    IConfiguration _configuration { get; set; }
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
@@ -40,7 +40,7 @@
         if (resourceguid != null)
         {
             selectedResource = _resourceService.Get(resourceguid);
-            
+
             if (year == 0) {
                 year = DateTime.Today.Year;
             }
@@ -52,7 +52,7 @@
             if (day == 0) {
                 day = DateTime.Today.Day;
             }
-        
+
             newBooking = new SingleBooking() {
                 DurationMinutes = selectedResource.DefaultBookingMinutes > 0 ? selectedResource.DefaultBookingMinutes : 60,
                 StartHourUTC = 8,
@@ -62,14 +62,14 @@
             };
 
             // Load bookings for this resource on this day
-            thisResourceBookings = _bookingService.Find(x => 
+            thisResourceBookings = _bookingService.Find(x =>
                     x.ResourceGUID == selectedResource.Id &&
-                    x.BookingDate.Year == newBooking.BookingDate.Year && 
+                    x.BookingDate.Year == newBooking.BookingDate.Year &&
                     x.BookingDate.Month == newBooking.BookingDate.Month &&
                     x.BookingDate.Day == newBooking.BookingDate.Day &&
                     x.IsCancelled == false
                     ).ToList();
-            
+
         }
     }
 
@@ -83,7 +83,7 @@
         thisResourceBookings.Add(newBooking);
         _bookingService.Insert(newBooking);
 
-        // Navigate back to resource view   
+        // Navigate back to resource view
         OnClick_Back();
     }
 
@@ -101,31 +101,31 @@
 @if(selectedResource == null) {
     <p>Resource not found</p>
 } else {
-    
+
 <AuthorizeView>
     @* EditForm interferes with the "context" property so we need to rename it to something else if there is an EditForm directly inside it *@
-    <Authorized Context="Auth"> 
+    <Authorized Context="Auth">
         @{
             newBooking.BookedByName = Auth.User.Identity.Name;
             string objectId = "";
             bool userCanAccessThisResource = false;
-            foreach(Claim claim in Auth.User.Claims) 
+            foreach(Claim claim in Auth.User.Claims)
             {
-                foreach(KeyValuePair<string, string> property in claim.Properties) 
+                foreach(KeyValuePair<string, string> property in claim.Properties)
                 {
-                    if (property.Value == "oid") 
+                    if (property.Value == "oid")
                     {
                         objectId = claim.Value;
                     }
                 }
 
-                if (claim.Type == "groups") 
+                if (claim.Type == "groups")
                 {
                     if (selectedResource.OIDC_CanEditBookings.Contains(claim.Value) || selectedResource.OIDC_CanViewResource.Contains(claim.Value))
                     {
                         userCanAccessThisResource = true;
                     }
-                    
+
                     if (!string.IsNullOrEmpty(_configuration["OIDC:AdminGroupID"]))
                     {
                         if (_configuration["OIDC:AdminGroupID"] == claim.Value)
@@ -134,13 +134,13 @@
                         }
                     }
                 }
-                
+
             }
             newBooking.BookedByObjectId = objectId;
 
-            
+
         }
-        <h1>@selectedResource.Name</h1>        
+        <h1>@selectedResource.Name</h1>
         <p>
         [<a href="/Resources/@(selectedResource.Id.ToString())/@(year)/@(month)">Back</a>]<br/>
         </p>
@@ -177,7 +177,7 @@
             </div>
 
 
-            
+
 
             <div class="book_resource_calendar">
                 <h3>@(newBooking.BookingDate.ToString("dddd, MMMM dd, yyyy"))</h3>
@@ -185,17 +185,17 @@
                 @for(int hour=6;hour<24;hour++) {
                     <div class="daycalendar_hour_block">
                         <div class="daycalendar_day_hour daycalendar_first_hour">
-                            <div class="daycalendar_day_hour_label">@hour:00</div>
+                            <div class="daycalendar_day_hour_label">@(hour > 12 ? (hour - 12) : hour):00 @(hour > 12 ? "pm" : "am") </div>
                         </div>
                         <div class="daycalendar_day_hour daycalendar_second_hour">
-                            <div class="daycalendar_day_hour_label">@hour:30</div>
+                            <div class="daycalendar_day_hour_label">@(hour > 12 ? (hour - 12) : hour):30 @(hour > 12 ? "pm" : "am")</div>
                         </div>
-                        <div style="position: absolute; top: 0; left: 50px;">
+                        <div style="position: absolute; top: 0; left: 60px;">
                             @foreach(SingleBooking booking  in thisResourceBookings.Where(x => x.StartTimeUTC.Hour == @hour))
                             {
                                 <div class="daycalendar_event" style="top: @((booking.StartTimeUTC.Minute/15)*13)px; height:@((booking.DurationMinutes/15)*13)px">
                                     <b>@booking.ShortDescription</b><br/>
-                                    @(booking.StartTimeUTC.ToShortTimeString()) to @(booking.EndTimeUTC.ToShortTimeString())
+                                    @(booking.StartTimeUTC.ToString("h:mm")) to @(booking.EndTimeUTC.ToString("h:mm"))
                                 </div>
                             }
                         </div>

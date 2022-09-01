@@ -19,14 +19,14 @@
 <div class="form-group">
 
     @if(Booking.IsCancelled) {
-        
+
         <div class="form-row">
             <div class="col-md-12" style="color: red; font-weight: bold;">
                  BOOKING IS CANCELLED
             </div>
         </div>
     }
-    
+
     <div class="form-row">
         <div class="col-md-4">
             <label for="bookingShortDescription" class="font-weight-bold">Short Description: </label>
@@ -53,13 +53,13 @@
             @(Booking.BookingDate.ToLongDateString())
         </div>
     </div>
-    
+
     <div class="form-row">
         <div class="col-md-4">
             <label for="bookingRequestor" class="font-weight-bold">Start Time: </label>
         </div>
         <div class="col-md-8">
-            @(Booking.StartTimeUTC.ToShortTimeString())
+            @(Booking.StartTimeUTC.ToString("h:mm tt"))
         </div>
     </div>
 
@@ -68,10 +68,10 @@
             <label for="bookingDuration" class="font-weight-bold">End Time: </label>
         </div>
         <div class="col-md-8">
-            @(Booking.EndTimeUTC.ToShortTimeString()) (@Booking.DurationMinutes minutes)
+            @(Booking.EndTimeUTC.ToString("h:mm tt")) (@Booking.DurationMinutes minutes)
         </div>
     </div>
-    
+
 
     <div class="form-row">
         <div class="col-md-4">
@@ -81,13 +81,13 @@
             @Booking.Details
         </div>
     </div>
-    
+
     <div class="form-row">
         <div class="col-md-4">
             <label for="bookingRequestorActual" class="font-weight-bold">Booked by: </label>
         </div>
         <div class="col-md-8">
-            @(Booking.BookedByName)    
+            @(Booking.BookedByName)
         </div>
     </div>
 
