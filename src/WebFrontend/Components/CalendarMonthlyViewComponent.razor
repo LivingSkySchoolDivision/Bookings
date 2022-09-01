@@ -65,7 +65,7 @@
 
 @{
     int dayCounter = ((int)_startDate.DayOfWeek * -1) + 1;
-    DateTime bookingWindowCutoffDate = BookingWindowDays > 0 ? Today.AddDays(BookingWindowDays) : DateTime.MaxValue;    
+    DateTime bookingWindowCutoffDate = BookingWindowDays > 0 ? Today.AddDays(BookingWindowDays) : DateTime.MaxValue;
 }
 
 <div class="calendar_container">
@@ -88,11 +88,11 @@
 
     @while(dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month))
     {
-        for(int x = 0; x < 7; x++) 
+        for(int x = 0; x < 7; x++)
         {
             @if ((dayCounter > 0) && (dayCounter <= DateTime.DaysInMonth(_startDate.Year, _startDate.Month)))
-            {          
-                bool isToday = ((Today.Year == _startDate.Year) && (Today.Month == _startDate.Month) && (Today.Day == dayCounter));                          
+            {
+                bool isToday = ((Today.Year == _startDate.Year) && (Today.Month == _startDate.Month) && (Today.Day == dayCounter));
                 DateTime thisDay = new DateTime(_startDate.Year, _startDate.Month, dayCounter);
                 bool isWithinBookingWindow = (thisDay >= Today.Date) && (thisDay <= bookingWindowCutoffDate);
 
@@ -114,7 +114,7 @@
                     @foreach(SingleBooking booking in bookingsThisMonth[dayCounter].OrderBy(x => x.StartTimeUTC.Hour).ThenBy(x => x.StartTimeUTC.Minute))
                     {
                         <div class="calendar_item_preview">
-                                <div class="calendar_item_preview_time">@(booking.StartTimeUTC.ToString("HH:mm"))-@(booking.EndTimeUTC.ToString("HH:mm"))</div>
+                                <div class="calendar_item_preview_time">@(booking.StartTimeUTC.ToString("h:mm"))-@(booking.EndTimeUTC.ToString("h:mm"))</div>
                                 <div class="calendar_item_preview_description">
                                     <a href="/Resources/@(resource.Id)/Booking/@(booking.Id)">@(booking.ShortDescription)</a>
                                 </div>

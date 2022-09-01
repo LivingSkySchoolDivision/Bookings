@@ -17,6 +17,7 @@
     position: relative;
     height: 26px;
     border-bottom: 1px solid #C0C0C0;
+    color: rgba(0,0,0,0.5);
 }
 
 .daycalendar_first_hour {
@@ -38,14 +39,15 @@
     left: 0px;
     top: 0px;
     background-color: cornflowerblue;
-    border-radius: 5px;
+    border-radius: 5px 0 0 5px;
     padding: 5px;
     box-sizing: border-box;
-    width: 290px;
+    width: 289px;
     z-index: 999;
     overflow: auto;
     scrollbar-width: thin;
-    opacity: 0.8;
+    opacity: 1;
+    color: black;
 }
 
 .daycalendar_event_ghost {
@@ -59,11 +61,11 @@
 }
 
 @media only screen and (max-width: 850px) {
-    
+
 	.book_resource_form {
         order: 2;
         width: 100%;
-        padding-top: 25px;        
+        padding-top: 25px;
     }
 
     .book_resource_calendar {
