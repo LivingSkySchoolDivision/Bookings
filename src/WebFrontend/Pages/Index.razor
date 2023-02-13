@@ -71,10 +71,16 @@
     <i>You don't appear to have access to any bookable resources. Sorry.</i>
 }
 <br/>
+<div style="display: flex; flex-wrap: wrap; ">
+<div class="config_button">
+    <a href="/MyBookings">My Bookings</a>
+</div>
+
 @if (context.User.Claims.Select(x => x.Value).Contains(Configuration["OIDC:AdminGroupID"])) {
     <div class="config_button">
         <a href="/Config">Config</a>
     </div>
 }
+</div>
     </Authorized>
 </AuthorizeView>
