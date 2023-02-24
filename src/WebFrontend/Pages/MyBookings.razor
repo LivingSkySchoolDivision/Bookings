@@ -1,0 +1,165 @@
+@page "/MyBookings"
+@using LSSD.Bookings
+@using System.Security.Claims
+@using Microsoft.Extensions.Configuration
+
+@code {
+
+    [Inject]
+    ResourceService _resourceService { get; set; }
+
+    [Inject]
+    BookingService _bookingService { get; set; }
+
+    [Inject]
+    IConfiguration _configuration { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    List<SingleBooking> myBookings = new List<SingleBooking>();
+
+    SingleBooking newBooking = new SingleBooking();
+
+    Dictionary<string, Resource> resourceDictionary = new Dictionary<string, Resource>();
+
+    protected override void OnInitialized()
+    {
+        _resourceService.GetAll().ToDictionary(x => x.Id);
+    }
+
+    protected void OnClick_Back()
+    {
+        NavigationManager.NavigateTo($"/");
+    }
+
+    protected void OnClick_CancelEvent(SingleBooking Booking, string Username)
+    {
+        Booking.IsCancelled = true;
+        Booking.CancelledBy = Username;
+
+        _bookingService.Update(Booking);        
+    }
+
+    protected void OnClick_UnCancelEvent(SingleBooking Booking, string Username)
+    {     
+        Booking.IsCancelled = false;
+        Booking.CancelledBy = "";
+        _bookingService.Update(Booking);
+    }
+}
+<div style="min-width: 1000px;">
+<AuthorizeView>
+    @* EditForm interferes with the "context" property so we need to rename it to something else if there is an EditForm directly inside it *@
+    <Authorized Context="Auth">
+        @{
+            // Get the current user's objectid
+            string userName = Auth.User.Identity.Name;
+            string userObjectID = "";
+            bool userCanAccessThisResource = false;
+            foreach(Claim claim in Auth.User.Claims)
+            {
+                foreach(KeyValuePair<string, string> property in claim.Properties)
+                {
+                    if (property.Value == "oid")
+                    {
+                        userObjectID = claim.Value;
+                    }
+                }
+            }
+
+            // Find any bookings where they are the booker
+            myBookings = _bookingService.Find(x => x.BookedByObjectId == userObjectID && x.BookingDate > DateTime.UtcNow.AddMonths(-12)).ToList();
+        }
+
+        <h1>Bookings for @userName</h1>
+
+        <p>
+            [<a href="/">Back</a>]<br/>
+        </p>
+
+        <br/>
+        <h2>Future bookings</h2>
+        <table border=0 cellpadding="5" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>Duration</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+            </thead>
+        @foreach (SingleBooking booking in myBookings.Where(x => x.BookingDate >= DateTime.UtcNow).OrderByDescending(x => x.BookingDate))
+        {
+            <tr>
+                <td width="25%" align="right">
+                    @if(booking.IsCancelled) {
+                    <i style="text-decoration: line-through;">@booking.BookingDate.ToString("dddd, MMMM dd, yyyy ")</i>
+                    } else {
+                        @booking.BookingDate.ToString("dddd, MMMM dd, yyyy ")
+                    }                    
+                </td>
+                <td width="10%" align="right">
+                    @if(booking.IsCancelled) {
+                        <i style="text-decoration: line-through;">@(booking.StartHourUTC):@(booking.StartMinuteUTC.ToString("00"))</i>
+                    } else {
+                        <span>@(booking.StartHourUTC):@(booking.StartMinuteUTC.ToString("00"))</span>
+                    }                    
+                </td>
+                <td width="10%" align="right">
+                    @if(booking.IsCancelled) {
+                        <i style="text-decoration: line-through;">@booking.DurationMinutes min</i>
+                    } else {
+                       <span>@booking.DurationMinutes min</span>
+                    }                    
+                </td>
+                <td width="45%">
+                    @if(booking.IsCancelled) {
+                        <i style="text-decoration: line-through;">@booking.ShortDescription</i>
+                    } else {
+                        @booking.ShortDescription
+                    }
+                </td>
+                <td width="10%">
+                    @if(booking.IsCancelled) 
+                    {
+                        <button type="button" @onclick="() => OnClick_UnCancelEvent(booking, Auth.User.Identity.Name)" class="btn btn-outline-danger">RESTORE</button>
+                    } else {
+                        <button type="button" @onclick="() => OnClick_CancelEvent(booking, Auth.User.Identity.Name)" class="btn btn-danger">CANCEL</button>
+                    }
+                </td>
+            </tr>
+        }
+        </table>
+        
+        <br/><br/><br/>
+        <h2>Past bookings from the last 12 months</h2>
+        <table border=0 cellpadding="5" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>Duration</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            @foreach (SingleBooking booking in myBookings.Where(x => x.BookingDate < DateTime.UtcNow).OrderByDescending(x => x.BookingDate))
+            {
+                <tr>
+                <td width="25%" align="right">@booking.BookingDate.ToString("dddd, MMMM dd, yyyy ")</td>
+                <td width="10%" align="right">@(booking.StartHourUTC):@(booking.StartMinuteUTC.ToString("00"))</td>
+                <td width="10%" align="right">@booking.DurationMinutes min</td>
+                <td width="45%">@booking.ShortDescription</td>
+                <td width="10%"></td>
+                </tr>
+            }
+        </table>
+
+        <br/><br/>
+
+
+    </Authorized>
+</AuthorizeView>
+
+</div>
