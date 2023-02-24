@@ -32,6 +32,21 @@
     {
         NavigationManager.NavigateTo($"/");
     }
+
+    protected void OnClick_CancelEvent(SingleBooking Booking, string Username)
+    {
+        Booking.IsCancelled = true;
+        Booking.CancelledBy = Username;
+
+        _bookingService.Update(Booking);        
+    }
+
+    protected void OnClick_UnCancelEvent(SingleBooking Booking, string Username)
+    {     
+        Booking.IsCancelled = false;
+        Booking.CancelledBy = "";
+        _bookingService.Update(Booking);
+    }
 }
 <div style="min-width: 1000px;">
 <AuthorizeView>
@@ -78,11 +93,42 @@
         @foreach (SingleBooking booking in myBookings.Where(x => x.BookingDate >= DateTime.UtcNow).OrderByDescending(x => x.BookingDate))
         {
             <tr>
-                <td width="25%" align="right">@booking.BookingDate.ToString("dddd, MMMM dd, yyyy ")</td>
-                <td width="10%" align="right">@(booking.StartHourUTC):@(booking.StartMinuteUTC.ToString("00"))</td>
-                <td width="10%" align="right">@booking.DurationMinutes min</td>
-                <td width="45%">@booking.ShortDescription</td>
-                <td width="10%">CANCEL</td>
+                <td width="25%" align="right">
+                    @if(booking.IsCancelled) {
+                    <i style="text-decoration: line-through;">@booking.BookingDate.ToString("dddd, MMMM dd, yyyy ")</i>
+                    } else {
+                        @booking.BookingDate.ToString("dddd, MMMM dd, yyyy ")
+                    }                    
+                </td>
+                <td width="10%" align="right">
+                    @if(booking.IsCancelled) {
+                        <i style="text-decoration: line-through;">@(booking.StartHourUTC):@(booking.StartMinuteUTC.ToString("00"))</i>
+                    } else {
+                        <span>@(booking.StartHourUTC):@(booking.StartMinuteUTC.ToString("00"))</span>
+                    }                    
+                </td>
+                <td width="10%" align="right">
+                    @if(booking.IsCancelled) {
+                        <i style="text-decoration: line-through;">@booking.DurationMinutes min</i>
+                    } else {
+                       <span>@booking.DurationMinutes min</span>
+                    }                    
+                </td>
+                <td width="45%">
+                    @if(booking.IsCancelled) {
+                        <i style="text-decoration: line-through;">@booking.ShortDescription</i>
+                    } else {
+                        @booking.ShortDescription
+                    }
+                </td>
+                <td width="10%">
+                    @if(booking.IsCancelled) 
+                    {
+                        <button type="button" @onclick="() => OnClick_UnCancelEvent(booking, Auth.User.Identity.Name)" class="btn btn-outline-danger">RESTORE</button>
+                    } else {
+                        <button type="button" @onclick="() => OnClick_CancelEvent(booking, Auth.User.Identity.Name)" class="btn btn-danger">CANCEL</button>
+                    }
+                </td>
             </tr>
         }
         </table>
