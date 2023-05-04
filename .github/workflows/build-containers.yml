@@ -24,8 +24,10 @@ jobs:
         include:
           - dockerfile: src/Dockerfile-API
             image: ghcr.io/livingskyschooldivision/bookings-api
+            context: ./src/
           - dockerfile: src/Dockerfile-WebFrontEnd
             image: ghcr.io/livingskyschooldivision/bookings-web
+            context: ./src/
     permissions:
       contents: read
       packages: write
@@ -71,7 +73,7 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
-          context: ./src
+          context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
