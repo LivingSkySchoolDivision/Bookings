@@ -22,9 +22,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: Dockerfile-API
+          - dockerfile: src/Dockerfile-API
             image: ghcr.io/livingskyschooldivision/bookings-api
-          - dockerfile: Dockerfile-WebFrontEnd
+          - dockerfile: src/Dockerfile-WebFrontEnd
             image: ghcr.io/livingskyschooldivision/bookings-web
     permissions:
       contents: read
