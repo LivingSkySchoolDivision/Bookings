@@ -53,14 +53,13 @@ namespace DebugConsole
                 .AddUserSecrets<Program>()
                 .Build();
 
-
             Console.WriteLine("Loading booking dates...");
             List<DateTime> bookingDays = new List<DateTime>();
 
             // Add the dates for the booking batch
             bookingDays = DaysBetween(
-                new DateTime(2022,10,21),
-                new DateTime(2023,6,30)
+                new DateTime(2024,02,01),
+                new DateTime(2024,6,28)
             );
 
             // Connect to the DB
@@ -72,20 +71,27 @@ namespace DebugConsole
             MongoRepository<SingleBooking> _bookingRepo = new MongoRepository<SingleBooking>(connection);
 
             // Get the resource to be booked
-            // NBCHS LAB 112
-            Resource lab112 = _resourceRepo.GetById("3baa6960-f759-4654-a692-4cc57e080c2d");
+            // NBCHS LAB 112 3baa6960-f759-4654-a692-4cc57e080c2d
+            Resource Booking_Resource = _resourceRepo.GetById("3baa6960-f759-4654-a692-4cc57e080c2d");
 
-            Console.WriteLine("Creating bookings for calendar: " + lab112.Name);
+            // Booking persion Azure ObjectID
+            string Booking_Title = "New Booking";
+            string Booker_ObjID = "";
+
+
+            Console.WriteLine("Creating bookings for calendar: " + Booking_Resource.Name);
 
             // Start time
-            int startHourUTC = 9; // the start hour in Saskatchewan time (24-hour)
-            int startMinuteUTC =  0;
+            // the start hour in Saskatchewan time (24-hour)
+            // We will adjust this to UTC further down, so make this local time
+            int startHourUTC = 10; 
+            int startMinuteUTC =  9;
 
             // Add 6 hours to adjust for UTC, as our database needs to store time in UTC
             startHourUTC += 6;
 
             // Duration
-            int durationMinutes = 70;
+            int durationMinutes = 63;
 
             Console.WriteLine("Creating " + bookingDays.Count + " bookings...");
             foreach(DateTime date in bookingDays)
@@ -96,16 +102,16 @@ namespace DebugConsole
                     BookingDate = new DateTime(date.Year, date.Month, date.Day),
                     StartHourUTC = startHourUTC,
                     StartMinuteUTC = startMinuteUTC,
-                    ResourceGUID = lab112.Id,
-                    BookedByName = "A Christensen",
-                    BookedByObjectId = "86549f68-455b-46aa-8dcd-255af10a33cc",
-                    ShortDescription = "A Christensen",
+                    ResourceGUID = Booking_Resource.Id,
+                    BookedByName = Booking_Title,
+                    BookedByObjectId = Booker_ObjID,
+                    ShortDescription = Booking_Title,
                     Details = "",
                     CreatedUTC = DateTime.UtcNow,
                     DurationMinutes = durationMinutes
                 };
 
-                Console.WriteLine(booking.BookingDate.ToString("ddd") + " " + booking.BookingDate.ToShortDateString() + " " + booking.StartHourUTC + ":" + booking.StartMinuteUTC);
+                Console.WriteLine(booking.BookingDate.ToString("ddd") + " " + booking.BookingDate.ToShortDateString() + " " + booking.StartHourUTC + ":" + booking.StartMinuteUTC + " - " + booking.ShortDescription);
 
                 // Add the booking to the DB
                 //_bookingRepo.Update(booking);
