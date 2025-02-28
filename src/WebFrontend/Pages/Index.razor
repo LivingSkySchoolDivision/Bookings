@@ -29,12 +29,14 @@
 
     foreach(Resource resource in thisUserResources)
     {
-        if (!_allResources.ContainsKey(resource.GroupGUID))
+        if (resource.IsEnabled)
         {
-            _allResources.Add(resource.GroupGUID, new List<Resource>());
-        }
-
-        _allResources[resource.GroupGUID].Add(resource);
+            if (!_allResources.ContainsKey(resource.GroupGUID))
+            {
+                _allResources.Add(resource.GroupGUID, new List<Resource>());
+            }
+            _allResources[resource.GroupGUID].Add(resource);
+        }        
     }
 }
 
