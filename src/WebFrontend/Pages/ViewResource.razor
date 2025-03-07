@@ -66,7 +66,7 @@
     }
     
     protected void OnClick_EnableCalendar(Resource resource)
-    {     
+{     
         if (!resource.IsEnabled) 
         {
             resource.IsEnabled = true;
@@ -98,8 +98,14 @@
             }
 
             @if(userCanAccessThisResource) {
-                <h1>@selectedResource.Name</h1>
+                <h1>
+                    @if (!string.IsNullOrEmpty(selectedResource.HTMLColorCode)) {
+                        <div style="display: inline-block; background-color:@(selectedResource.HTMLColorCode); width: 50px; height: 50px; margin-right: 7px; border: 1px solid black; border-radius: 4px;">&nbsp;</div>
+                    }
+                    @selectedResource.Name
+                </h1>
                 <p>@(selectedResource.Description)</p>
+
                 <p>
                     [<a href="/">Back</a>]
                 </p>

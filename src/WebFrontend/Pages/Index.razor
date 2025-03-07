@@ -54,7 +54,17 @@
                 <div class="resource_item">
                     
                     @if(res.IsEnabled) {
-                        <div class="resource_name"><a href="/Resources/@(res.Id)"><span class="oi oi-calendar"></span> @res.Name</a></div>
+
+                        <div class="resource_name">
+                            <a href="/Resources/@(res.Id)">
+                                @if (!string.IsNullOrEmpty(res.HTMLColorCode)) {
+                                    <span class="oi oi-calendar" style="color: @(res.HTMLColorCode);"></span>
+                                } else {
+                                    <span class="oi oi-calendar"></span>
+                                }
+                                @res.Name
+                            </a>
+                        </div>
                     } else {
                         <div class="resource_name"><i><span class="oi oi-ban"></span> @res.Name (Disabled)</i></div>
                         <div class="resource_description"><a href="/Resources/@(res.Id)">View disabled calendar</a></div>
